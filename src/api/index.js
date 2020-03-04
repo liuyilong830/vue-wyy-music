@@ -15,7 +15,6 @@ instance.interceptors.request.use(config => {
 // 响应拦截器
 instance.interceptors.response.use(response => {
   if(response.data.code === 200) {
-    store.commit('setToken',response.data.token)
     return response.data
   }
 },err => {

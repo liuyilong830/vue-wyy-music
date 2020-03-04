@@ -1,30 +1,28 @@
 <template>
-  <div class="phone-login">
+  <div class="register-by-phone">
     <nav-bar @confirmBack='confirmBack'>
       <template v-slot:center>
-        <span>密码登录</span>
+        <span>手机号注册</span>
       </template>
     </nav-bar>
     <div class="phone">
       <div class="relative">
-        <input type="password" name="phone" v-model="password" placeholder="请输入密码">
+        <input type="password" name="phone" v-model="password" placeholder="设置登录密码，不少于6位">
         <i class="iconfont icon-shouji"></i>
-        <span class="unknow" @click="unknowPwd">忘记密码？</span>
+        <i class="iconfont icon-cha" @click="clearPhone" v-show="password.length >= 1"></i>
       </div>
     </div>
     <div class="next">
-      <div class="btn" v-if="flag" @click="LoginClick">登录</div>
-      <div class="btn" v-else>登录中...</div>
+      <div class="btn" @click="registerNext">下一步</div>
     </div>
   </div>
 </template>
 
 <script>
-  import NavBar from 'components/common/navbar/NavBar.vue'
+  import NavBar from 'components/common/navbar/NavBar'
   import { Toast } from 'vant'
-  import {postLogin} from 'api/api.js'
   export default {
-    name: 'PassWord',
+    name: 'RegisterByPhone',
     components: {
       NavBar
     },
@@ -34,8 +32,7 @@
     },
     data() {
       return {
-        password: '',
-        flag: true
+        password: ''
       }
     },
     computed: {
@@ -48,47 +45,32 @@
       confirmBack() {
         this.$emit('click',!this.$attrs.val1)
       },
-      LoginClick() {
-        if(this.testPassWord) {
-          this.flag = false
-          postLogin({phone: this.$attrs.phone,password: this.password}).then(res => {
-            console.log(res)
-            if(res.code === 200) {
-              this.$store.commit('setAccount',res.account)
-              this.$store.commit('setProfile',res.profile)
-              this.$store.commit('setLoginType',res.loginType)
-              this.$store.commit('setBindings',res.bindings)
-              this.$store.commit('setToken',res.token)
-              this.$router.replace('/find')
-            } else {
-              Toast('密码错误')
-            }
-          })
-        } else {
-          Toast('密码不能有\'"汉字。，——')
-        }
+      clearPhone() {
+        this.password = ''
       },
-      unknowPwd() {
-        
+      registerNext() {
+        if(this.password.length == 6 && this.testPassWord) {
+          if(!window.localStorage.getItem('codeFlag')) {
+            return Toast('验证码失效，请重新获取')
+          }
+          // 下一步
+          
+        } else {
+          Toast('请确保密码长度不小于6位，且密码不得出现\' \" 汉字 。，——这类非法特殊符号')
+        }
       }
     }
   }
 </script>
 
 <style lang="stylus" scoped>
-  .phone-login {
+  .register-by-phone {
     background-color #fff
     width 100vw
     height 100vh
     position fixed
-    z-index 999
     top 0
-  }
-  .warning {
-    color #b5b5b5
-    font-size 14px
-    padding-left 10px
-    padding-bottom 15px
+    z-index 999
   }
   .phone {
     box-sizing border-box
@@ -103,7 +85,7 @@
   }
   .phone input {
     box-sizing border-box
-    padding 0 80px 0 40px
+    padding 0 40px
     width 100%
     height 100%
     border none 
@@ -116,10 +98,9 @@
     top 50%
     transform translateY(-50%)
   }
-  .phone .unknow {
+  .phone .icon-cha {
     position absolute
-    color #2fc1f1
-    right 0
+    right 10px
     top 50%
     transform translateY(-50%)
   }

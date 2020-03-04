@@ -69,7 +69,6 @@
         if(this.testPhone) {
           this.loading = true
           testPhone(this.phone).then(res => {
-            console.log(res.exist)
             if(res.exist == -1) {
               this.isNewUser = true
             } else if(res.exist == 1) {

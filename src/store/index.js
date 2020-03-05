@@ -12,7 +12,9 @@ const state = {
   account: JSON.parse(window.localStorage.getItem('account-wyy')) || {},
   profile: JSON.parse(window.localStorage.getItem('profile-wyy')) || {},
   loginType: window.localStorage.getItem('loginType'),
-  bindings: JSON.parse(window.localStorage.getItem('bindings')) || []
+  bindings: JSON.parse(window.localStorage.getItem('bindings')) || [],
+  phone: '',
+  password: ''
 }
 
 export default new Vuex.Store({

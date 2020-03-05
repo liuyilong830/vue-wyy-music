@@ -11,7 +11,7 @@
           <i class="iconfont icon-weixin"></i>
           <i class="iconfont icon-QQ"></i>
           <i class="iconfont icon-weibo"></i>
-          <i class="iconfont icon-wangyi"></i>
+          <i class="iconfont icon-wangyi" @click="emailBy163"></i>
         </div>
         <div class="agreement">
           <span class="button" @click="agress = !agress">{{agress == true? '√' : ''}}</span>
@@ -23,36 +23,48 @@
       </div>
     </div>
     <phone-login v-model="isShow" v-show="isShow"></phone-login>
+    <pass-word v-model="showEmail" v-show="showEmail" :showEmail='showEmail'></pass-word>
   </div>
 </template>
 
 <script>
   import PhoneLogin from './child/PhoneLogin'
+  import PassWord from './child/PassWord'
   import { Toast } from 'vant'
   export default {
     name: 'Login',
     components: {
-      PhoneLogin
+      PhoneLogin,
+      PassWord
     },
     data() {
       return {
         agress: false,
-        isShow: false
+        isShow: false,
+        showEmail: false
       }
     },
     methods: {
-      loginClick() {
+      agreement() {
         if(!this.agress) {
           Toast('请勾选同意《用户协议》《隐私政策》《儿童隐私政策》')
-        }else {
+          return false
+        }
+        return true
+      },
+      loginClick() {
+        if(this.agreement()) {
           this.isShow = true
         }
       },
       tiyanClick() {
-        if(!this.agress) {
-          Toast('请勾选同意《用户协议》《隐私政策》《儿童隐私政策》')
-        }else {
+        if(this.agreement()) {
           this.$router.replace('/find')
+        }
+      },
+      emailBy163() {
+        if(this.agreement()) {
+          this.showEmail = true
         }
       }
     }

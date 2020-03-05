@@ -70,6 +70,7 @@
           this.loading = true
           testPhone(this.phone).then(res => {
             if(res.exist == -1) {
+              this.$store.commit('setPhone',this.phone)
               this.isNewUser = true
             } else if(res.exist == 1) {
               this.isShow = false

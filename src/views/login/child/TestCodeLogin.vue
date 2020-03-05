@@ -76,10 +76,6 @@
             Toast('验证码错误')
           }
         })
-        /* if(value == '1234') {
-          window.localStorage.setItem('code',value)
-          return this.isRegister = true
-        } */
       },
       // 输入数字操作
       onInput(num) {
@@ -134,6 +130,9 @@
     created() {
       this.time = parseInt(window.localStorage.getItem('time')) || this.time
       this.code = window.localStorage.getItem('codeFlag') == 'true'? true : this.code
+      if(this.time < 60) {
+        this.CountDown()
+      }
     }
   }
 </script>

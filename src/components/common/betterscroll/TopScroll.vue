@@ -29,10 +29,16 @@
       }
     },
     methods: {
-      
+      compWidth() {
+        for(var item of this.$refs.content.children[0].children) {
+          this.width += item.clientWidth
+        }
+      }
     },
     mounted() {
-      this.$refs.content.style.width = this.$refs.content.children[0].clientWidth + 'px'
+      this.compWidth()
+      // console.log(this.$refs.content.children[0].children)
+      this.$refs.content.style.width = this.width + 40 + 'px'
       this.$nextTick(() => {
         this.scroll = new BScroll(this.$refs.wrapperTop,{
           scrollX: true,  //  允许横向滑动

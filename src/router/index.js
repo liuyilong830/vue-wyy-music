@@ -8,6 +8,7 @@ const Find = () => import('views/find/Find.vue')
 const Profile = () => import('views/profile/Profile.vue')
 const Cloud  = () => import('views/cloud/Cloud.vue')
 const Video = () => import('views/video/Video.vue')
+const DailyRecommend = () => import('views/Daily/DailyRecommend')
 
 const routes = [
   { path: '/' , redirect: '/login'},
@@ -15,7 +16,8 @@ const routes = [
   { path: '/find' , component: Find , meta:{showTabBar:true} },
   { path: '/profile' , component: Profile , meta:{showTabBar:true} },
   { path: '/cloud' , component: Cloud , meta:{showTabBar:true} },
-  { path: '/video' , component: Video , meta:{showTabBar:true} }
+  { path: '/video' , component: Video , meta:{showTabBar:true} },
+  { path: '/dailyRem' , component: DailyRecommend , meta:{showTabBar: false}}
 ]
 
 const router = new VueRouter({

@@ -1,68 +1,71 @@
 <template>
   <div class="home-find" v-if="swiperList.length !== 0">
-    <!-- <vuescroll class="vue-scroll">
-      <van-swipe :autoplay="3000" indicator-color="white" class='my-swipe'>
-        <van-swipe-item v-for='(item,index) in swiperList' :key='index'>
-          <img :src="item.pic" alt="">
-        </van-swipe-item>
-      </van-swipe>
-      <icon></icon>
-      <recommend></recommend>
-      发现
-    </vuescroll> -->
     <b-scroll class='wrapper-find' :probeType='3'>
       <van-swipe :autoplay="3000" indicator-color="white" class='my-swipe'>
         <van-swipe-item v-for='(item,index) in swiperList' :key='index'>
-          <img :src="item.pic" alt="">
+          <img :src="item.pic || item.imageUrl" alt="">
         </van-swipe-item>
       </van-swipe>
-      <icon></icon>
-      <recommend></recommend>
+      
+      <icon-list :classList='classList' @iconClick='iconClick'></icon-list>
+
+      <recommend :recommend='recommend'></recommend>
+      <style-rem></style-rem>
+
     </b-scroll>
   </div>
 </template>
 
 <script>
-  import vuescroll from 'vuescroll'
   import MySwiper from 'components/common/swiper/MySwiper.vue'
   import SwiperList from 'components/common/swiper/SwiperList.vue'
-  import Icon from './child/Icon.vue'
+  import IconList from 'components/content/five-icon/IconList'
   import Recommend from './child/Recommend.vue'
+  import StyleRem from './child/StyleRem'
   import BScroll from 'components/common/betterscroll/BScroll.vue'
   import { Swipe, SwipeItem } from 'vant'
 
-  import {swiperList} from 'api/api.js'
+  import {swiperList,hotSongs6} from 'api/api.js'
   import {mapGetters} from 'vuex'
   export default {
     name: 'Find',
     components: {
-      vuescroll,
       VanSwipe: Swipe,
       VanSwipeItem: SwipeItem,
-      Icon,
       Recommend,
-      BScroll
+      BScroll,
+      StyleRem,
+      IconList
     },
     data() {
       return {
-        ops: {
-          vuescroll: {
-            sizeStrategy: 'percent'
-          },
-          scrollPanel: {
-            scrollingX: false
-          }
-        },
-        swiperList: []
+        swiperList: [],
+        account: {},
+        recommend: [],
+        classList: [
+          {title: '每日推荐', cls: 'icon-meirituijian'},
+          {title: '歌单', cls: 'icon-gedan'},
+          {title: '排行榜', cls: 'icon-paixingbang-copy'},
+          {title: '电台', cls: 'icon-diantai'},
+          {title: '直播', cls: 'icon-zhibo'}
+        ]
       }
     },
     computed: {
-      ...mapGetters(['getType'])
+      ...mapGetters(['getType','getAccount'])
     },
     methods: {
       onChange() {
 
+      },
+      iconClick(index) {
+        if(index == 0) {
+          this.$router.push('/dailyRem')
+        }
       }
+    },
+    created() {
+      this.account = this.getAccount
     },
     mounted() {
       swiperList(this.getType).then(res => {
@@ -72,6 +75,11 @@
       }).catch(err => {
         console.log(err.message)
       })
+      hotSongs6().then(res => {
+        if(res.code === 200) {
+          this.recommend = res.recommend.slice(1,7)
+        }
+      })
     }
   }
 </script>
@@ -80,6 +88,8 @@
   .home-find {
     background-color: #fff;
     width: 100vw;
+    height: calc(100vh - 49px);
+    padding-top: 49px;
   }
   .wrapper-find {
     height: calc(100vh - 49px);

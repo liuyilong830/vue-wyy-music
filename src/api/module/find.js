@@ -1,3 +1,4 @@
 export const find = {
-  swiper: '/banner'
+  swiper: '/banner',
+  hotSongs6: '/recommend/resource'
 }

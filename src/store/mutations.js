@@ -18,5 +18,11 @@ export const mutations = {
   setToken(state,token) {
     window.localStorage.setItem('token-wyy',token)
     state.token = token
+  },
+  setPhone(state,phone) {
+    state.phone = phone
+  },
+  setPassword(state,pwd) {
+    state.password = pwd
   }
 }

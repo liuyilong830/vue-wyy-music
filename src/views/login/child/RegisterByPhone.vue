@@ -15,16 +15,20 @@
     <div class="next">
       <div class="btn" @click="registerNext">下一步</div>
     </div>
+
+    <register-set-nick-name v-show="showSetNickName" v-model="showSetNickName"></register-set-nick-name>
   </div>
 </template>
 
 <script>
   import NavBar from 'components/common/navbar/NavBar'
+  import RegisterSetNickName from './RegisterSetNickName'
   import { Toast } from 'vant'
   export default {
     name: 'RegisterByPhone',
     components: {
-      NavBar
+      NavBar,
+      RegisterSetNickName
     },
     model: {
       prop: 'val1',
@@ -32,7 +36,8 @@
     },
     data() {
       return {
-        password: ''
+        password: '',
+        showSetNickName: false
       }
     },
     computed: {
@@ -49,12 +54,13 @@
         this.password = ''
       },
       registerNext() {
-        if(this.password.length == 6 && this.testPassWord) {
+        if(this.password.length >= 6 && this.testPassWord) {
           if(!window.localStorage.getItem('codeFlag')) {
             return Toast('验证码失效，请重新获取')
           }
           // 下一步
-          
+          this.$store.commit('setPassword',this.password)
+          this.showSetNickName = true
         } else {
           Toast('请确保密码长度不小于6位，且密码不得出现\' \" 汉字 。，——这类非法特殊符号')
         }

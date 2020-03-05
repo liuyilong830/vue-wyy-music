@@ -2,13 +2,19 @@
   <div class="phone-login">
     <nav-bar @confirmBack='confirmBack'>
       <template v-slot:center>
-        <span>密码登录</span>
+        <span v-if="!showEmail">密码登录</span>
+        <span v-else>网易邮箱账号登录</span>
       </template>
     </nav-bar>
+    <div class="phone" v-if="showEmail">
+      <div class="relative">
+        <input type="email" name="email" v-model="email" placeholder="网易邮箱账号登录">
+      </div>
+    </div>
     <div class="phone">
       <div class="relative">
         <input type="password" name="phone" v-model="password" placeholder="请输入密码">
-        <i class="iconfont icon-shouji"></i>
+        <!-- <i class="iconfont icon-shouji"></i> -->
         <span class="unknow" @click="unknowPwd">忘记密码？</span>
       </div>
     </div>
@@ -22,7 +28,8 @@
 <script>
   import NavBar from 'components/common/navbar/NavBar.vue'
   import { Toast } from 'vant'
-  import {postLogin} from 'api/api.js'
+  import {postLogin,emailLogin} from 'api/api.js'
+  import {mapGetters} from 'vuex'
   export default {
     name: 'PassWord',
     components: {
@@ -35,35 +42,80 @@
     data() {
       return {
         password: '',
-        flag: true
+        flag: true,
+        pwdOremail: true,
+        email: ''
+      }
+    },
+    props: {
+      showEmail: {
+        type: Boolean,
+        default: false
       }
     },
     computed: {
       testPassWord() {
         // 密码不能有'"汉字。，——
         return /[(\.\*\!\@\#\$\%\^\&\(\)\-\+\=\|\[\]\{\};:,.<>\/\?~`)0-9a-z]/ig.test(this.password)
-      }
+      },
+      testEmail() {
+        return /^[a-z0-9]+@163\.com/i.test(this.email)
+      },
+      ...mapGetters(['getPhone'])
     },
     methods: {
       confirmBack() {
         this.$emit('click',!this.$attrs.val1)
       },
+      byPhoneLogin() {
+        this.flag = false
+        postLogin({phone: this.$attrs.phone || this.getPhone ,password: this.password}).then(res => {
+          console.log(res)
+          if(res.code === 200) {
+            this.$store.commit('setAccount',res.account)
+            this.$store.commit('setProfile',res.profile)
+            this.$store.commit('setLoginType',res.loginType)
+            this.$store.commit('setBindings',res.bindings)
+            this.$store.commit('setToken',res.token)
+            this.$router.replace('/find')
+          } else {
+            Toast('密码错误')
+          }
+        })
+      },
+      byEmailLogin() {
+        this.flag = false
+        emailLogin(this.email,this.password).then(res => {
+          console.log(res)
+          if(res.code === 200) {
+            this.$store.commit('setAccount',res.account)
+            this.$store.commit('setToken',res.token)
+            this.$store.commit('setBindings',res.bindings)
+            this.$store.commit('setLoginType',res.loginType)
+            this.$router.replace('/find')
+          } else {
+            this.flag = true
+          }
+        }).catch(err => {
+          this.flag = true
+          console.log(err.message)
+        })
+      },
       LoginClick() {
+        if(this.showEmail) {
+          if(this.email == '') {
+            return Toast('请先输入邮箱')
+          }else if(!this.testEmail) {
+            return Toast('请输入合法的网易邮箱')
+          }
+        }
         if(this.testPassWord) {
-          this.flag = false
-          postLogin({phone: this.$attrs.phone,password: this.password}).then(res => {
-            console.log(res)
-            if(res.code === 200) {
-              this.$store.commit('setAccount',res.account)
-              this.$store.commit('setProfile',res.profile)
-              this.$store.commit('setLoginType',res.loginType)
-              this.$store.commit('setBindings',res.bindings)
-              this.$store.commit('setToken',res.token)
-              this.$router.replace('/find')
-            } else {
-              Toast('密码错误')
-            }
-          })
+          if(!this.showEmail) {
+            this.byPhoneLogin()
+          }
+          if(this.showEmail) {
+            this.byEmailLogin()
+          }
         } else {
           Toast('密码不能有\'"汉字。，——')
         }
@@ -95,6 +147,7 @@
     padding 5px 10px 0
     width 100vw
     height 40px
+    margin-bottom 10px
   }
   .relative {
     position relative
@@ -103,7 +156,7 @@
   }
   .phone input {
     box-sizing border-box
-    padding 0 80px 0 40px
+    padding-right 80px
     width 100%
     height 100%
     border none 

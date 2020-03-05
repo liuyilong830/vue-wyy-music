@@ -1,18 +1,31 @@
 <template>
-  <div class="recommend">
-    <p class='title'>推荐歌单</p>
-    <div class='text'>
-      <div class='blod-title'>为你精挑细选</div>
-      <div class='more'><span>查看更多</span></div>
-    </div>
+  <div class="recommend" v-if="recommend.length !== 0">
+    <more @upLoadMore='upLoadMoreBySelect'>
+      <template v-slot:title>
+        <span>推荐歌单</span>
+      </template>
+      <template v-slot:blod>
+        <span>为你精挑细选</span>
+      </template>
+      <template v-slot:showMore>
+        <span>查看更多</span>
+      </template>
+    </more>
     <top-scroll :bounce='false' :probeType='3' class='x-scroll'>
       <div class='recommend-songs'>
-        <div class='item' v-for='index in 6' :key='index'>
-          <div class='image'>
-            <img src='' />
-          </div>
-          <span class='describe'></span>
-        </div>
+
+        <song-item v-for="(item,index) in recommend" :key="index">
+          <template v-slot:count>
+            <span>{{item.playcount | playCount}}</span>
+          </template>
+          <template v-slot:image>
+            <img :src="item.picUrl" alt="">
+          </template>
+          <template v-slot:describe>
+            <span>{{item.copywriter}}</span>
+          </template>
+        </song-item>
+
       </div>
     </top-scroll>
   </div>
@@ -20,10 +33,39 @@
 
 <script>
   import TopScroll from 'components/common/betterscroll/TopScroll.vue'
+  import SongItem from 'components/content/song-item/SongItem'
+  import More from 'components/content/more/More'
   export default {
     name: 'Recommend',
     components: {
-      TopScroll
+      TopScroll,
+      SongItem,
+      More
+    },
+    props: {
+      recommend: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
+    },
+    filters: {
+      playCount(value) {
+        var value = value.toString()
+        if(value.length > 8) {
+          return value.substring(0,value.toString().length - 8) + '亿'
+        }
+        if(value.length >= 5) {
+          return value.substring(0,value.toString().length - 4) + '万'
+        }
+        return value
+      }
+    },
+    methods: {
+      upLoadMoreBySelect() {
+
+      }
     }
   }
 </script>
@@ -33,7 +75,7 @@
     width 100vw
     padding 0 15px
     box-sizing border-box
-    margin 10px 0
+    margin 10px 0 20px
   }
   .title {
     color #ccc
@@ -62,30 +104,11 @@
     width 100%
   }
   .recommend-songs {
+    width 100%
     display flex
-    justify-content flex-start
-  }
-  .item {
-    display flex
-    flex-direction column
     justify-content space-between
-    margin-right 7px
   }
   .recommend-songs .item:last-child {
     margin-right 0
-  }
-  .image {
-    width 100px
-    height 100px
-    background-color red
-    border-radius 15px
-  }
-  .image img {
-    width 100%
-  }
-  .describe {
-    width 100px
-    height 40px
-    background-color blue
   }
 </style>

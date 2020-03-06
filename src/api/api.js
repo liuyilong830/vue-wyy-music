@@ -2,6 +2,7 @@ import {get , post} from './index'
 import {home} from './module/home'
 import {login} from './module/login'
 import {find} from './module/find'
+import {daily} from './module/daily'
 
 export const getSwiperList = () => get(home.swiper)
 
@@ -15,3 +16,5 @@ export const emailLogin = (email,password) => get(login.emailLogin, {email,passw
 
 export const swiperList = (type) => get(find.swiper, {type,timestamp: new Date().getTime()})
 export const hotSongs6 = () => get(find.hotSongs6, {timestamp: new Date().getTime()})
+
+export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getTime()})

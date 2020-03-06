@@ -32,6 +32,15 @@
       scrollX: {
         type: Boolean,
         defalut: false
+      },
+      scrollY: {
+        type: Boolean,
+        default: true
+      }
+    },
+    computed: {
+      canScrollY() {
+        return this.scrollY
       }
     },
     mounted() {
@@ -42,6 +51,7 @@
             probeType: this.probeType,
             click: true,
             scrollX: this.scrollX,
+            scrollY: true,
             bounce: this.bounce // 关闭better-scroll 的弹簧效果
           })
           // 将上拉加载的方法通过 $emit 传到 Hot.vue 组件中

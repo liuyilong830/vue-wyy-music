@@ -1,22 +1,27 @@
 <template>
   <div class="playing-song">
-    <div class="Album">
-      <slot name="Album">
-        <img src="" alt="">
-      </slot>
-    </div>
-    <div class="playing-describe">
-      <div class="song-name"><slot name="songName">目不转睛</slot></div>
-      <p class="artists">
-        <slot name="artists">
-          <span>横滑可切换上下首哦</span>
+    <div class="describe-playing">
+      <div class="Album">
+        <slot name="Album">
+          <img src="" alt="">
         </slot>
-      </p>
+      </div>
+      <div class="playing-describe">
+        <div class="song-name"><slot name="songName">目不转睛</slot></div>
+        <p class="artists">
+          <slot name="artists">
+            <span>横滑可切换上下首哦</span>
+          </slot>
+        </p>
+      </div>
+      <div class="playing-status">
+        <slot name="changeIcon">
+          <span class="iconfont icon-bofang2"></span>
+        </slot>
+        <span class="iconfont icon-gengduo2"></span>
+      </div>
     </div>
-    <div class="playing-status">
-      <span class="iconfont icon-bofang2"></span>
-      <span class="iconfont icon-gengduo2"></span>
-    </div>
+    
   </div>
 </template>
 
@@ -35,21 +40,26 @@
     bottom 0
     z-index 999
     box-shadow 0 -1px 3px #cccccc
+  }
+  .describe-playing {
+    height 100%
     display flex
     align-items center
   }
   .Album {
-    flex 10%
+    width 40px
     box-sizing border-box
     padding 3px
-    height 80%
+    height 40px
+    overflow hidden
   }
   .Album img {
     width 100%
+    height 100%
     border-radius 50%
   }
   .playing-describe {
-    flex 70%
+    width: calc(100vw - 40px - 75px);
     display flex
     flex-direction column
     justify-content space-evenly
@@ -63,11 +73,14 @@
     color #cccccc
   }
   .playing-status {
-    flex 20%
+    width 75px
     display flex
     justify-content space-around
   }
-  .icon-bofang2, .icon-gengduo2 {
+  .playing-status .iconfont {
     font-size 27px
+  }
+  .playing-status .icon-gengduo2 {
+    font-size 26px
   }
 </style>

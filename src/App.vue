@@ -4,19 +4,22 @@
     <keep-alive :exclude="['Login']">
       <router-view></router-view>
     </keep-alive>
+    <player v-show="$route.meta.showPlayer"></player>
   </div>
 </template>
 
 <script>
   import MainTabBar from 'components/content/tabbar/MainTabBar'
+  import Player from 'components/content/playing-song/Player.vue'
   export default {
     name: 'App',
     components: {
-      MainTabBar
+      MainTabBar,
+      Player
     }
   }
 </script>
 
 <style lang="stylus" scoped>
-  @import url('http://at.alicdn.com/t/font_1668893_c7uxfk06mvm.css');
+  @import url('http://at.alicdn.com/t/font_1668893_35b4cajxyzn.css');
 </style>

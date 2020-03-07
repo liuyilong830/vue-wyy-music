@@ -1,3 +1,4 @@
 export const daily = {
-  dailySongs: '/recommend/songs'
+  dailySongs: '/recommend/songs',
+  songDetail: '/song/url'
 }

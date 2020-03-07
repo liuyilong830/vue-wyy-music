@@ -4,6 +4,11 @@
       <slot name="img">
         <img src="" alt="">
       </slot>
+      <div class="position" v-show="flag">
+        <slot name="playing">
+          <span class="iconfont"></span>
+        </slot>
+      </div>
     </div>
     <div class="song-describe">
       <div class="song-name"><slot name="songName">目不转睛</slot></div>
@@ -24,11 +29,9 @@
   export default {
     name: 'Song',
     props: {
-      songItem: {
-        type: Object,
-        default() {
-          return {}
-        }
+      flag: {
+        type: Boolean,
+        default: false
       }
     }
   }
@@ -46,9 +49,12 @@
   .picimg {
     flex 12%
     height 40px
+    overflow hidden
+    position relative
   }
   .picimg img {
     width 100%
+    height 100%
     border-radius 4px
   }
   .song-describe {
@@ -83,5 +89,21 @@
   }
   .iconfont {
     font-size 20px
+  }
+  .position {
+    width 100%
+    height 100%
+    position absolute
+    top 0 
+    left 0
+    background-color #fff
+    display flex
+    justify-content center
+    align-items center
+    text-align center
+  }
+  .position span {
+    color #fd4b4b
+    font-size 31px
   }
 </style>

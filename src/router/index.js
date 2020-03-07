@@ -9,15 +9,18 @@ const Profile = () => import('views/profile/Profile.vue')
 const Cloud  = () => import('views/cloud/Cloud.vue')
 const Video = () => import('views/video/Video.vue')
 const DailyRecommend = () => import('views/Daily/DailyRecommend')
+const MusicPlayer = () => import('views/music-player/MusicPlayer')
 
 const routes = [
   { path: '/' , redirect: '/login'},
   { path: '/login' , component: Login },
-  { path: '/find' , component: Find , meta:{showTabBar:true} },
-  { path: '/profile' , component: Profile , meta:{showTabBar:true} },
-  { path: '/cloud' , component: Cloud , meta:{showTabBar:true} },
-  { path: '/video' , component: Video , meta:{showTabBar:true} },
-  { path: '/dailyRem' , component: DailyRecommend , meta:{showTabBar: false}}
+  { path: '/find' , component: Find , meta:{showTabBar:true, showPlayer:true} },
+  { path: '/profile' , component: Profile , meta:{showTabBar:true, showPlayer:true} },
+  { path: '/cloud' , component: Cloud , meta:{showTabBar:true, showPlayer:true} },
+  { path: '/video' , component: Video , meta:{showTabBar:true, showPlayer:true} },
+  { path: '/dailyRem' , component: DailyRecommend , meta:{showTabBar: false, showPlayer:true} , children: [
+    { path: 'music' , component: MusicPlayer }
+  ]}
 ]
 
 const router = new VueRouter({

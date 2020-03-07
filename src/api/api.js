@@ -18,3 +18,4 @@ export const swiperList = (type) => get(find.swiper, {type,timestamp: new Date()
 export const hotSongs6 = () => get(find.hotSongs6, {timestamp: new Date().getTime()})
 
 export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getTime()})
+export const songDetail = (ids) => get(daily.songDetail,{ id: ids.join() , timestamp: new Date().getTime() })

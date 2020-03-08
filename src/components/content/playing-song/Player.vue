@@ -1,6 +1,6 @@
 <template>
   <div class="player">
-    <playing-song class="playing-song" v-if="getPlayingSong.length !== 0" @click="openPlayer">
+    <playing-song class="playing-song" v-if="getPlayingSong.length !== 0" @click.native="openPlayer">
       <template v-slot:Album>
         <img :src="getPlayingSong[index].album.blurPicUrl" alt="">
       </template>
@@ -13,7 +13,7 @@
       </template>
     </playing-song>
 
-    <audio :src="getSongObj.url" ref="audio" @ended="onended"></audio>
+    <audio :src="getSongObj.url" ref="audio" @ended="onended" @timeupdate="onTimeUpdate"></audio>
   </div>
 </template>
 
@@ -56,6 +56,10 @@
           this.palyFlag = false
         }
       },
+      getTime() {
+        // console.log(this.$refs.audio.currentTime)
+        this.$bus.$emit('timeUpdate',this.$refs.audio.currentTime)
+      },
       // 当播放结束的时候进行的操作
       onended() {
         if(this.getPlayingSong[this.index+1]) {
@@ -65,15 +69,30 @@
           return this.palyFlag = false
         }
       },
+      onTimeUpdate() {
+        this.getTime()
+      },
       openPlayer() {
-        console.log(111)
-        this.$router.replace('/music')
+        this.$router.push('/dailyRem/music')
       }
+    },
+    mounted() {
+      this.$bus.$on('startOrstopSong', () => {
+        this.playClick()
+        this.getTime()
+      })
+      this.$bus.$on('changeTime', time => {
+        this.$refs.audio.currentTime = time
+      })
     }
   }
 </script>
 
 <style lang="stylus" scoped>
+  .player {
+    width 100vw
+    height 45px
+  }
   .playing-song .icon-bofangzhong {
     font-size  28px
   }

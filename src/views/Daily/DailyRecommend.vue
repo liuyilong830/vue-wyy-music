@@ -68,9 +68,7 @@
       </div>
     </b-scroll>
 
-    <!-- <music-player v-model="showMusic" v-if="showMusic"></music-player> -->
-    <!-- <player v-show="showBottomBar"></player> -->
-    <router-view></router-view>
+    <router-view v-if="routerViewShow"></router-view>
   </div>
 </template>
 
@@ -117,7 +115,8 @@
         songDet: [], // 用来保存每日推荐歌曲中每个音乐的详情数据，顺序不定
         songObj: {},
         showBottomBar: false,
-        showMusic: false
+        showMusic: false,
+        routerViewShow: false
       }
     },
     computed: {
@@ -139,6 +138,7 @@
       },
       // 播放点击的音乐
       playerClick(id,index,item) {
+        this.routerViewShow = true
         // 因为按照顺序join到数据库中查询详情页数据，但是返回的数据却不是按顺序的，所以我们只能通过find去查找
         this.songObj = this.songDet.find(item => item.id == id)
         this.$store.commit('setPlayingSong',{song: this.songs[index], songObj: this.songObj})

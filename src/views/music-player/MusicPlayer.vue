@@ -18,7 +18,7 @@
       <div class="show">
         <div class="albumImg">
           <div class="mask">
-            <div class="circular" ref="circular">
+            <div class="circular" ref="circular" :class="cdClass">
               <img :src="getShowSong[0].album.blurPicUrl" alt="">
             </div>
           </div>
@@ -86,6 +86,9 @@
       ...mapGetters(['getPlayingSong','getSongsDetail','getSongObj','getShowSong']),
       currentTime() {
         return this.time * 1000
+      },
+      cdClass() {
+        return this.start? 'play' : 'play stop'
       }
     },
     filters: {
@@ -151,15 +154,6 @@
         if(val == parseInt((this.getShowSong[0].bMusic.playTime / 1000))) {
           this.start = false
         }
-      },
-      start(val,oldVal) {
-        if(val == true) {
-          console.log(111)
-          this.$refs.circular.animationPlayState = 'running'
-        } else {
-          this.$refs.circular.animationPlayState = 'paused'
-        }
-        console.log(this.$refs.circular)
       }
     }
   }
@@ -241,7 +235,12 @@
     margin 0 auto
     background-color #fff
     overflow hidden
-    animation rotate 60s infinite
+  }
+  .play {
+    animation rotate 50s infinite linear
+  }
+  .stop {
+    animation-play-state paused
   }
   @keyframes rotate {
     from {

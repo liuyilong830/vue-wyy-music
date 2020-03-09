@@ -17,7 +17,17 @@ const state = {
   password: '',
   playingSong: [], // 用来存放多组音乐，每点击一首歌，就将其加入到等待播放的数组中，按顺序执行
   songObj: {}, // 保存当前播放歌曲的详情和之前播放歌曲的详情数组，包含播放的url
-  songsDetail: [] // 保存多组音乐的详情数据，与上面的 playingSong数组一一对应
+  songsDetail: [], // 保存多组音乐的详情数据，与上面的 playingSong数组一一对应
+  move: 1,  // 表示当前播放的模式，1表示列表循环，2表示单曲循环，3表示随机播放
+  btnFlag: true,  // 记录当前音乐播放按钮的状态
+  currentTime: 0,
+  currentLength: 0,
+  songFlag: {
+    move: 1,
+    btnFlag: true,
+    currentTime: 0,
+    currentLength: 0,
+  }
 }
 
 export default new Vuex.Store({

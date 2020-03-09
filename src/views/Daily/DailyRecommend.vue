@@ -116,7 +116,8 @@
         songObj: {},
         showBottomBar: false,
         showMusic: false,
-        routerViewShow: false
+        routerViewShow: false,
+        realSongDet: []
       }
     },
     computed: {
@@ -141,7 +142,7 @@
         this.routerViewShow = true
         // 因为按照顺序join到数据库中查询详情页数据，但是返回的数据却不是按顺序的，所以我们只能通过find去查找
         this.songObj = this.songDet.find(item => item.id == id)
-        this.$store.commit('setPlayingSong',{song: this.songs[index], songObj: this.songObj})
+        this.$store.commit('setSongList', {songs: this.songs , songsDetail: this.realSongDet})
         this.$store.commit('changeSongObj',this.songObj)
         this.$router.push('/dailyRem/music')
       },
@@ -153,6 +154,9 @@
         songDetail(this.songIdArr).then(res => {
           if(res.code === 200) {
             this.songDet = res.data
+            for(var key in this.songIdArr) {
+              this.realSongDet.push(this.songDet.find(item => item.id == this.songIdArr[key]))
+            }
           }
         })
       }

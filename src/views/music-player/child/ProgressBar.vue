@@ -8,7 +8,7 @@
     <div class="progress-show">
       <div class="total-length" ref="totalLength" @click="jumpClick">
         <div class="current-length" ref="currentLength">
-          <div class="current-dot"></div>
+          <div class="current-dot" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd'></div>
         </div>
       </div>
     </div>
@@ -26,7 +26,10 @@
     data() {
       return {
         TotalW: 0,
-        offsetX: 0
+        offsetX: 0,
+        touchs: 0,
+        touche: 0,
+        touchOffsetX: 0
       }
     },
     props: {
@@ -45,7 +48,19 @@
         this.offsetX = event.offsetX
         this.$refs.currentLength.style.width = this.offsetX + 'px'
         this.$emit('changeTime',this.offsetX)
-      }
+      },
+      touchStart(event) {
+        this.touchs = this.$refs.totalLength.getBoundingClientRect().x
+      },
+      touchMove(event) {
+        this.touche = event.touches[0].pageX || event.touches[0].clientX
+        // 如果是向右拖动，则 touchOffsetX 是正数且逐渐增大，否则是负数
+        this.touchOffsetX = this.touche - this.touchs
+        this.$emit('touchTime',this.touchOffsetX)
+      },
+      touchEnd() {
+        this.$emit('endTime')
+      },
     },
     mounted() {
       this.getTotalLength()

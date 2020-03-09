@@ -26,7 +26,12 @@
         <operation></operation>
       </div>
       <div class="hhhh">
-        <progress-bar @getTotalLength='getTotalLength' :currentLength='currentLength' @changeTime='changeTime'>
+        <progress-bar 
+        @getTotalLength='getTotalLength' 
+        :currentLength='currentLength' 
+        @changeTime='changeTime' 
+        @touchTime='touchTime'
+        @endTime='endTime'>
           <template v-slot:startTime>
             <span>{{currentTime | getPlayTime}}</span>
           </template>
@@ -36,17 +41,19 @@
         </progress-bar>
         <operation-song class="operation-song">
           <template v-slot:Move>
-            <span class="iconfont icon-ttpodicon"></span>
+            <span class="iconfont icon-ttpodicon" v-if="move == 1" @click="changeMove"></span>
+            <span class="iconfont icon-danquxunhuan" v-else-if="move == 2" @click="changeMove"></span>
+            <span class="iconfont icon-bofangye-caozuolan-suijibofang" v-else-if="move == 3" @click="changeMove"></span>
           </template>
           <template v-slot:isBefore>
-            <span class="iconfont icon-shangyishoushangyige"></span>
+            <span class="iconfont icon-shangyishoushangyige" @click="beforeClick"></span>
           </template>
           <template v-slot:isStop>
             <span class="iconfont icon-bofang4" @click="startOrstopSong" v-if="start"></span>
             <span class="iconfont icon-bofang3" @click="startOrstopSong" v-else></span>
           </template>
           <template v-slot:isNext>
-            <span class="iconfont icon-shangyishoushangyige-copy"></span>
+            <span class="iconfont icon-shangyishoushangyige-copy" @click="nextClick"></span>
           </template>
           <template v-slot:isMore>
             <span class="iconfont icon-gengduo2"></span>
@@ -79,14 +86,17 @@
         start: true,
         time: 0,
         currentLength: 0,
-        allWidth: 0
+        allWidth: 0,
+        flag: true,
+        move: 1  // 1表示列表循环，2表示单曲循环，3表示随机播放
       }
     },
     computed: {
-      ...mapGetters(['getPlayingSong','getSongsDetail','getSongObj','getShowSong']),
+      ...mapGetters(['getPlayingSong','getSongsDetail','getSongObj','getShowSong','getSongFlag']),
       currentTime() {
         return this.time * 1000
       },
+      // 音乐暂停的时候添加 play stop 类，音乐播放的时候添加 play 类
       cdClass() {
         return this.start? 'play' : 'play stop'
       }
@@ -106,8 +116,12 @@
     },
     methods: {
       confirmBack() {
-        // var backPath = window.localStorage.getItem('backPath')
         this.$router.go(-1)
+      },
+      changeMove() {
+        this.move ++
+        this.move = this.move > 3? 1 : this.move
+        this.$store.commit('setSongFlag',{move: this.move})
       },
       startOrstopSong() {
         // 使用事件总线来控制player组件的播放和暂停
@@ -127,6 +141,30 @@
         var time = currentW * (this.getShowSong[0].bMusic.playTime / 1000) / this.allWidth
         this.$bus.$emit('changeTime',time)
       },
+      touchTime(length) {
+        // 当用户拖动的时候，设置状态为false，这里设置状态的原因是为了当拖拽事件结束之后，可以监听状态的改变从而重新通过事件总线发起监听
+        this.flag = false
+        this.time = length * (this.getShowSong[0].bMusic.playTime / 1000) / this.allWidth
+        // 在拖动的过程中要先关闭该事件总线，不然会存在一来一回的情况
+        this.$bus.$off('timeUpdate')
+      },
+      endTime() {
+        // 在拖动结束之后，发起改变时间的事件，同时将状态改回true
+        this.$bus.$emit('changeTime',this.time)
+        this.flag = true
+      },
+      beforeClick() {
+        // 先获取当前播放音乐在歌曲列表中的索引位置
+        var index = this.getPlayingSong.findIndex(item => item.id == this.getSongObj.id)
+        // 通过事件总线，调用播放器的播放下一首函数
+        this.$bus.$emit('beforeSong')
+      },
+      nextClick() {
+        // 先获取当前播放音乐在歌曲列表中的索引位置
+        var index = this.getPlayingSong.findIndex(item => item.id == this.getSongObj.id)
+        // 通过事件总线，调用播放器的播放下一首函数
+        this.$bus.$emit('nextSong')
+      },
       // 改变伪元素样式，用来设置高斯模糊的图片壁纸
       setStyleBg() {
         this.style = document.createElement("style")
@@ -137,12 +175,18 @@
       }
     },
     mounted() {
+      this.move = this.getSongFlag.move
       this.setStyleBg()
       this.onTimeUpdate()
+      this.start = this.getSongFlag.btnFlag
+      this.currentLength = this.getSongFlag.currentLength
+      this.time = this.getSongFlag.currentTime
     },
-    destroyed() {
+    beforeDestroy() {
       document.head.removeChild(this.style)
       this.style = null
+      this.$store.commit('setSongFlag',{currentLength: this.currentLength})
+      this.$store.commit('setSongFlag',{currentTime: this.time})
     },
     watch: {
       getSongObj() {
@@ -153,6 +197,12 @@
         this.currentLength = val * this.allWidth / (this.getShowSong[0].bMusic.playTime / 1000)
         if(val == parseInt((this.getShowSong[0].bMusic.playTime / 1000))) {
           this.start = false
+        }
+      },
+      flag(val,oldVal) {
+        // 判断状态如果是true的话，则重新发送事件总线监听
+        if(val === true) {
+          this.onTimeUpdate()
         }
       }
     }

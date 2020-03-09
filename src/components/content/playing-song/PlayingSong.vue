@@ -67,6 +67,9 @@
   }
   .song-name {
     font-size 15px
+    white-space nowrap
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .artists {
     font-size 13px

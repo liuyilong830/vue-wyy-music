@@ -26,19 +26,10 @@ export const getters = {
   getCurrentIndex(state) {
     return state.playingSong.findIndex(item => item.id == state.songObj.id)
   },
-  /* getMove(state) {
-    return state.move
-  },
-  getBtnFlag(state) {
-    return state.btnFlag
-  },
-  getCurrentLength(state) {
-    return state.currentLength
-  },
-  getCurrentTime(state) {
-    return state.currentTime
-  }, */
   getSongFlag(state) {
     return state.songFlag
+  },
+  getOffsetY(state) {
+    return state.lyricInfo
   }
 }

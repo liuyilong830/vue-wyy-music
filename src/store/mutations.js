@@ -47,19 +47,11 @@ export const mutations = {
   changeSongObj(state,songObj) {
     state.songObj = songObj
   },
-  /* changeMove(state,move) {
-    state.move = move
-  },
-  setBtnFlag(state,flag) {
-    state.btnFlag = flag
-  },
-  setCurrentLength(state,length) {
-    state.currentLength = length
-  },
-  setCurrentTime(state,time) {
-    state.currentTime = time
-  }, */
   setSongFlag(state,payload) {
     state.songFlag = Object.assign(state.songFlag, payload)
+  },
+  setLyricInfo(state,payload) {
+    state.lyricInfo.offsetY = payload.offsetY
+    state.lyricInfo.index = payload.index
   }
 }

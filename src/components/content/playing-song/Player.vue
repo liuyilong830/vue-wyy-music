@@ -45,6 +45,7 @@
           this.index = this.getCurrentIndex
           this.$refs.audio.play()
           this.palyFlag = true
+          this.$store.commit('setSongFlag',{btnFlag: this.palyFlag})
         })
       },
       getSongsDetail(val,oldVal) {
@@ -81,9 +82,9 @@
       },
       // 播放上一首
       before() {
-        if(this.getMove === 1) {
+        if(this.getSongFlag.move === 1) {
           this.listLoop(false)
-        } else if(this.getMove === 2) {
+        } else if(this.getSongFlag.move === 2) {
           this.onlyOneLoop()
         } else {
           this.randomLoop(false)
@@ -133,6 +134,7 @@
       // 当播放结束的时候进行的操作
       onended() {
         this.next()
+        this.$bus.$emit('endedSong')
       },
       onTimeUpdate() {
         this.getTime()

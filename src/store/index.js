@@ -27,6 +27,10 @@ const state = {
     btnFlag: true,
     currentTime: 0,
     currentLength: 0,
+  },
+  lyricInfo: {
+    offsetY: 0,
+    index: 0
   }
 }
 

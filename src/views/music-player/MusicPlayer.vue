@@ -15,15 +15,18 @@
           <span class="iconfont icon-fenxiang1"></span>
         </template>
       </nav-bar>
-      <div class="show">
-        <div class="albumImg">
-          <div class="mask">
-            <div class="circular" ref="circular" :class="cdClass">
-              <img :src="getShowSong[0].album.blurPicUrl" alt="">
+      <div class="normal">
+        <div class="show" @click="showLyric" ref="show" :style="{visibility: getShowLyric}">
+          <div class="albumImg">
+            <div class="mask">
+              <div class="circular" ref="circular" :class="cdClass">
+                <img :src="getShowSong[0].album.blurPicUrl" alt="">
+              </div>
             </div>
           </div>
+          <operation></operation>
         </div>
-        <operation></operation>
+        <lyric :lyric='lyric' :flag1='flag' ref="lyric" v-model='isShowLyric'></lyric>
       </div>
       <div class="hhhh">
         <progress-bar 
@@ -69,14 +72,17 @@
   import Operation from './child/Operation'
   import ProgressBar from './child/ProgressBar'
   import OperationSong from './child/OperationSong'
+  import Lyric from './child/Lyric'
   import {mapGetters} from 'vuex'
+  import {getLyric} from 'api/api.js'
   export default {
     name: 'MusicPlayer',
     components: {
       NavBar,
       Operation,
       ProgressBar,
-      OperationSong
+      OperationSong,
+      Lyric
     },
     data() {
       return {
@@ -88,7 +94,9 @@
         currentLength: 0,
         allWidth: 0,
         flag: true,
-        move: 1  // 1表示列表循环，2表示单曲循环，3表示随机播放
+        move: 1,  // 1表示列表循环，2表示单曲循环，3表示随机播放
+        isShowLyric: false, // 是否显示歌词
+        lyric: {}
       }
     },
     computed: {
@@ -99,6 +107,9 @@
       // 音乐暂停的时候添加 play stop 类，音乐播放的时候添加 play 类
       cdClass() {
         return this.start? 'play' : 'play stop'
+      },
+      getShowLyric() {
+        return this.isShowLyric? 'hidden' : 'visible'
       }
     },
     filters: {
@@ -117,6 +128,10 @@
     methods: {
       confirmBack() {
         this.$router.go(-1)
+      },
+      showLyric() {
+        this.$refs.show.style.visibility = 'hidden'
+        this.isShowLyric = true
       },
       changeMove() {
         this.move ++
@@ -172,15 +187,27 @@
         this.sheet = this.style.sheet
         this.bgUrl = this.getShowSong[0].album.blurPicUrl
         this.sheet.insertRule(`.musicPlayer::before { background: url(${this.bgUrl}) -136px 0px/ 100vh }`, 0)
+      },
+      // 页面加载完成的时候获取当前播放的相关信息
+      setInitSongFlag() {
+        this.start = this.getSongFlag.btnFlag
+        this.currentLength = this.getSongFlag.currentLength
+        this.time = this.getSongFlag.currentTime
+      },
+      getSongLyric() {
+        getLyric(this.getSongObj.id).then(res => {
+          if(res.code == 200) {
+            this.lyric = res.lrc
+          }
+        })
       }
     },
     mounted() {
       this.move = this.getSongFlag.move
       this.setStyleBg()
       this.onTimeUpdate()
-      this.start = this.getSongFlag.btnFlag
-      this.currentLength = this.getSongFlag.currentLength
-      this.time = this.getSongFlag.currentTime
+      this.setInitSongFlag()
+      this.getSongLyric()
     },
     beforeDestroy() {
       document.head.removeChild(this.style)
@@ -191,12 +218,15 @@
     watch: {
       getSongObj() {
         this.setStyleBg()
+        this.getSongLyric()
         this.start = true
       },
       time(val,oldVal) {
         this.currentLength = val * this.allWidth / (this.getShowSong[0].bMusic.playTime / 1000)
         if(val == parseInt((this.getShowSong[0].bMusic.playTime / 1000))) {
           this.start = false
+        } else {
+          this.start = true
         }
       },
       flag(val,oldVal) {
@@ -260,12 +290,17 @@
     font-size 33px
     color #ffffff
   }
+  .show {
+    position absolute
+    z-index 1
+    top 70px
+  }
   .albumImg {
     width 275px
     height 275px
     border-radius 50%
     background-color rgba(144,144,144,.5)
-    margin 70px auto
+    margin 0 auto 70px
     display flex
     align-items center
   }
@@ -307,5 +342,13 @@
     width 100vw
     position absolute
     bottom 10px
+  }
+  .normal {
+    width 100vw
+    height: calc(100vh - 50px - 130px);
+    box-sizing border-box
+    padding-top 70px
+    overflow hidden
+    position relative
   }
 </style>

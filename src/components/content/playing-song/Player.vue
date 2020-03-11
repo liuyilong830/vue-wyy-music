@@ -48,6 +48,7 @@
           this.$store.commit('setSongFlag',{btnFlag: this.palyFlag})
         })
       },
+      // 生成随机播放的歌曲数组
       getSongsDetail(val,oldVal) {
         this.songList = val.map(item => item)
         this.setRandomList(this.songList.length)
@@ -64,14 +65,16 @@
           this.$refs.audio.pause()
           this.palyFlag = false
         }
+        // 控制按钮显示为播放的按钮还是暂停的按钮
         this.$store.commit('setSongFlag',{btnFlag: this.palyFlag})
       },
       getTime() {
-        // console.log(this.$refs.audio.currentTime)
+        // audio可以获取当前歌曲播放的时间
         this.$bus.$emit('timeUpdate',this.$refs.audio.currentTime)
       },
-      // 播放下一首的函数
+      // 播放下一首
       next() {
+        // move=1位列表循环播放，2为单曲循环，3为随机播放
         if(this.getSongFlag.move === 1) {
           this.listLoop(true)
         } else if(this.getSongFlag.move === 2) {
@@ -118,6 +121,7 @@
           this.$store.commit('changeSongObj',this.randomSongList[this.index])
         }
       },
+      // 将列表循环的数组变成随机的数组，然后按随机数组播放就是随机播放功能了(这里的数组是复制的一个新数组，并没有改变之前的数组)
       setRandomList(length) {
         this.randomSongList.splice(0)
         var obj = {}
@@ -136,27 +140,35 @@
         this.next()
         this.$bus.$emit('endedSong')
       },
+      // 监听audio的时间更新的事件
       onTimeUpdate() {
         this.getTime()
       },
+      // 点击图片打开播放器
       openPlayer() {
         this.$router.push('/dailyRem/music')
       }
     },
     mounted() {
+      // 当 MusicPlayer 组件点击了播放和暂停按钮触发
       this.$bus.$on('startOrstopSong', () => {
         this.playClick()
         this.getTime()
       })
+      // 当 MusicPlayer 组件移动了进度条的时候触发
       this.$bus.$on('changeTime', time => {
         this.$refs.audio.currentTime = time
       })
+      // 当 MusicPlayer 组件点击了播放下一首的按钮
       this.$bus.$on('nextSong', () => {
         this.next()
       })
+      // 当 MusicPlayer 组件点击了播放上一首的按钮
       this.$bus.$on('beforeSong', () => {
         this.before()
       })
+      // 播放按钮和暂停按钮的显示
+      this.palyFlag = this.getSongFlag.btnFlag
     }
   }
 </script>

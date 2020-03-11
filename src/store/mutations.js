@@ -45,13 +45,9 @@ export const mutations = {
     state.songsDetail.unshift(payload.songObj)
   },
   changeSongObj(state,songObj) {
-    state.songObj = songObj
+    state.songObj = Object.assign({}, songObj)
   },
   setSongFlag(state,payload) {
     state.songFlag = Object.assign(state.songFlag, payload)
-  },
-  setLyricInfo(state,payload) {
-    state.lyricInfo.offsetY = payload.offsetY
-    state.lyricInfo.index = payload.index
   }
 }

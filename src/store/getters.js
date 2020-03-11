@@ -28,8 +28,5 @@ export const getters = {
   },
   getSongFlag(state) {
     return state.songFlag
-  },
-  getOffsetY(state) {
-    return state.lyricInfo
   }
 }

@@ -26,7 +26,7 @@
           </div>
           <operation></operation>
         </div>
-        <lyric :lyric='lyric' :flag1='flag' ref="lyric" v-model='isShowLyric'></lyric>
+        <lyric :lyric='lyric' :flag1='flag' ref="lyric" v-model='isShowLyric' v-bind:changeLyric.sync='changeLyric'></lyric>
       </div>
       <div class="hhhh">
         <progress-bar 
@@ -96,7 +96,8 @@
         flag: true,
         move: 1,  // 1表示列表循环，2表示单曲循环，3表示随机播放
         isShowLyric: false, // 是否显示歌词
-        lyric: {}
+        lyric: {},
+        changeLyric: false
       }
     },
     computed: {
@@ -108,11 +109,13 @@
       cdClass() {
         return this.start? 'play' : 'play stop'
       },
+      // 旋转cd和歌词的显示和隐藏
       getShowLyric() {
         return this.isShowLyric? 'hidden' : 'visible'
       }
     },
     filters: {
+      // 转换成 00:00格式的时间过滤器
       getPlayTime(value) {
         var minutes = parseInt(value / 1000 / 60)
         var seconds = parseInt((value / 1000) % 60)
@@ -126,36 +129,46 @@
       }
     },
     methods: {
+      // NavBar的返回按钮
       confirmBack() {
         this.$router.go(-1)
       },
+      // 显示歌词
       showLyric() {
         this.$refs.show.style.visibility = 'hidden'
         this.isShowLyric = true
       },
+      // 切换播放的模式
       changeMove() {
         this.move ++
         this.move = this.move > 3? 1 : this.move
         this.$store.commit('setSongFlag',{move: this.move})
       },
+      // 点击播放和暂停按钮
       startOrstopSong() {
         // 使用事件总线来控制player组件的播放和暂停
         this.$bus.$emit('startOrstopSong')
         this.start = !this.start
+        this.$store.commit('setSongFlag',{btnFlag: this.start})
       },
+      // 实时获取当前播放的时间
       onTimeUpdate() {
         // 通过事件总线，获取歌曲当前播放的时间点
         this.$bus.$on('timeUpdate', (time) => {
           this.time = parseInt(time)
         })
       },
+      // 获取进度条的总长度
       getTotalLength(allWidth) {
         this.allWidth = allWidth
       },
+      // 点击进度条改变时间，注意：audio的currentIndex是可读可写的
       changeTime(currentW) {
+        this.changeLyric = true
         var time = currentW * (this.getShowSong[0].bMusic.playTime / 1000) / this.allWidth
         this.$bus.$emit('changeTime',time)
       },
+      // 拖动进度条操作
       touchTime(length) {
         // 当用户拖动的时候，设置状态为false，这里设置状态的原因是为了当拖拽事件结束之后，可以监听状态的改变从而重新通过事件总线发起监听
         this.flag = false
@@ -163,17 +176,21 @@
         // 在拖动的过程中要先关闭该事件总线，不然会存在一来一回的情况
         this.$bus.$off('timeUpdate')
       },
+      // 拖动结束之后
       endTime() {
         // 在拖动结束之后，发起改变时间的事件，同时将状态改回true
         this.$bus.$emit('changeTime',this.time)
         this.flag = true
+        this.changeLyric = true
       },
+      // 播放上一首
       beforeClick() {
         // 先获取当前播放音乐在歌曲列表中的索引位置
         var index = this.getPlayingSong.findIndex(item => item.id == this.getSongObj.id)
         // 通过事件总线，调用播放器的播放下一首函数
         this.$bus.$emit('beforeSong')
       },
+      // 播放下一首
       nextClick() {
         // 先获取当前播放音乐在歌曲列表中的索引位置
         var index = this.getPlayingSong.findIndex(item => item.id == this.getSongObj.id)
@@ -190,10 +207,12 @@
       },
       // 页面加载完成的时候获取当前播放的相关信息
       setInitSongFlag() {
+        this.move = this.getSongFlag.move
         this.start = this.getSongFlag.btnFlag
         this.currentLength = this.getSongFlag.currentLength
         this.time = this.getSongFlag.currentTime
       },
+      // 获取歌词信息
       getSongLyric() {
         getLyric(this.getSongObj.id).then(res => {
           if(res.code == 200) {
@@ -203,7 +222,6 @@
       }
     },
     mounted() {
-      this.move = this.getSongFlag.move
       this.setStyleBg()
       this.onTimeUpdate()
       this.setInitSongFlag()
@@ -216,17 +234,21 @@
       this.$store.commit('setSongFlag',{currentTime: this.time})
     },
     watch: {
+      /**
+       * 监听音乐切换的时候将偏移量和索引归0，从歌曲列表进来的时候是监听不到的因为我是通过v-if显示的，所以点击歌曲列表进来的时候，监听器还没生成，
+       * 这里的监听是监听歌曲播放完之后自动切换到下一首的时候会触发，前提是没有关闭播放器页面
+       */
       getSongObj() {
         this.setStyleBg()
         this.getSongLyric()
         this.start = true
       },
+      // 监听时间变化，时间一边就计算进度条当前位置的长度
       time(val,oldVal) {
         this.currentLength = val * this.allWidth / (this.getShowSong[0].bMusic.playTime / 1000)
         if(val == parseInt((this.getShowSong[0].bMusic.playTime / 1000))) {
+          // 控制播放按钮和暂停按钮的显示
           this.start = false
-        } else {
-          this.start = true
         }
       },
       flag(val,oldVal) {
@@ -293,14 +315,13 @@
   .show {
     position absolute
     z-index 1
-    top 70px
   }
   .albumImg {
     width 275px
     height 275px
     border-radius 50%
     background-color rgba(144,144,144,.5)
-    margin 0 auto 70px
+    margin 70px auto 70px
     display flex
     align-items center
   }
@@ -346,8 +367,8 @@
   .normal {
     width 100vw
     height: calc(100vh - 50px - 130px);
-    box-sizing border-box
-    padding-top 70px
+    /* box-sizing border-box
+    padding-top 70px */
     overflow hidden
     position relative
   }

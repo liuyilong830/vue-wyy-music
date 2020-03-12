@@ -8,7 +8,7 @@
         {{getShowSong[0].name}}
       </template>
       <template v-slot:changeIcon>
-        <span class="iconfont icon-bofang2" v-if='!palyFlag' @click="playClick"></span>
+        <span class="iconfont icon-bofang2" v-if='!getSongFlag.btnFlag' @click="playClick"></span>
         <span class="iconfont icon-bofangzhong" v-else @click="playClick"></span>
       </template>
     </playing-song>
@@ -28,10 +28,10 @@
     },
     data() {
       return {
-        palyFlag: false,
         index: 0,
         songList: [],
-        randomSongList: []
+        randomSongList: [],
+        volume: 1
       }
     },
     computed: {
@@ -44,14 +44,15 @@
         this.$refs.audio.addEventListener('loadedmetadata', () => {
           this.index = this.getCurrentIndex
           this.$refs.audio.play()
-          this.palyFlag = true
-          this.$store.commit('setSongFlag',{btnFlag: this.palyFlag})
         })
       },
       // 生成随机播放的歌曲数组
       getSongsDetail(val,oldVal) {
         this.songList = val.map(item => item)
         this.setRandomList(this.songList.length)
+      },
+      volume(val,oldVal) {
+        this.$refs.audio.volume = val
       }
     },
     methods: {
@@ -60,13 +61,9 @@
         // 当播放的时候，paused的值为false
         if(this.$refs.audio.paused) {
           this.$refs.audio.play()
-          this.palyFlag = true
         } else {
           this.$refs.audio.pause()
-          this.palyFlag = false
         }
-        // 控制按钮显示为播放的按钮还是暂停的按钮
-        this.$store.commit('setSongFlag',{btnFlag: this.palyFlag})
       },
       getTime() {
         // audio可以获取当前歌曲播放的时间
@@ -107,7 +104,6 @@
       onlyOneLoop() {
         if(this.$refs.audio.paused) {
           this.$refs.audio.play()
-          this.palyFlag = true
         }
       },
       // 随机列表循环播放
@@ -167,8 +163,9 @@
       this.$bus.$on('beforeSong', () => {
         this.before()
       })
-      // 播放按钮和暂停按钮的显示
-      this.palyFlag = this.getSongFlag.btnFlag
+      this.$bus.$on('changeVolume', Proportion => {
+        this.volume = Proportion
+      })
     }
   }
 </script>

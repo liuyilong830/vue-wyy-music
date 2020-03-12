@@ -56,6 +56,7 @@
         this.touche = event.touches[0].pageX || event.touches[0].clientX
         // 如果是向右拖动，则 touchOffsetX 是正数且逐渐增大，否则是负数
         this.touchOffsetX = this.touche - this.touchs
+        if(this.touchOffsetX >= this.TotalW || this.touchOffsetX <= 0) return
         this.$emit('touchTime',this.touchOffsetX)
       },
       touchEnd() {

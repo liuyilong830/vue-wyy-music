@@ -242,6 +242,7 @@
         this.setStyleBg()
         this.getSongLyric()
         this.start = true
+        this.$store.commit('setSongFlag',{btnFlag: this.start})
       },
       // 监听时间变化，时间一边就计算进度条当前位置的长度
       time(val,oldVal) {
@@ -249,6 +250,7 @@
         if(val == parseInt((this.getShowSong[0].bMusic.playTime / 1000))) {
           // 控制播放按钮和暂停按钮的显示
           this.start = false
+          this.$store.commit('setSongFlag',{btnFlag: this.start})
         }
       },
       flag(val,oldVal) {

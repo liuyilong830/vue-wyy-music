@@ -6,6 +6,8 @@ Vue.use(Vuex)
 import {mutations} from './mutations'
 import {actions} from './actions'
 import {getters} from './getters'
+import {findView} from './modules/findView'
+import {profileView} from './modules/profileView'
 
 const state = {
   token: window.localStorage.getItem('token-wyy') || '',
@@ -23,6 +25,7 @@ const state = {
     btnFlag: true,  // 记录当前音乐播放按钮的状态
     currentTime: 0,
     currentLength: 0,
+    current: 0
   }
 }
 
@@ -30,5 +33,9 @@ export default new Vuex.Store({
   state,
   mutations,
   actions,
-  getters
+  getters,
+  modules: {
+    findView,
+    profileView
+  }
 })

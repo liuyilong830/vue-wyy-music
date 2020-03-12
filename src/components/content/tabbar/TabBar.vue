@@ -35,9 +35,6 @@
     text-align center
     font-weight 500
     color #afafaf
-    position fixed
-    top 0
-    z-index 99
   }
   .left, .right {
     flex 15%

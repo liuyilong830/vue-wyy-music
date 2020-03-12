@@ -10,7 +10,7 @@
       <icon-list :classList='classList' @iconClick='iconClick'></icon-list>
 
       <recommend :recommend='recommend'></recommend>
-      <style-rem></style-rem>
+      <style-rem :playlists='playlist'></style-rem>
 
     </b-scroll>
   </div>
@@ -26,7 +26,7 @@
   import { Swipe, SwipeItem } from 'vant'
 
   import {swiperList,hotSongs6} from 'api/api.js'
-  import {mapGetters} from 'vuex'
+  import {mapGetters,mapActions,mapState} from 'vuex'
   export default {
     name: 'Find',
     components: {
@@ -52,9 +52,11 @@
       }
     },
     computed: {
+      ...mapState('findView', ['playlist']),
       ...mapGetters(['getType','getAccount'])
     },
     methods: {
+      ...mapActions('findView',['styleRecom','playDetail']),
       onChange() {
 
       },
@@ -80,6 +82,7 @@
           this.recommend = res.recommend.slice(1,7)
         }
       })
+      this.styleRecom('说唱')
     }
   }
 </script>
@@ -89,7 +92,6 @@
     background-color: #fff;
     width: 100vw;
     height: calc(100vh - 49px);
-    padding-top: 49px;
   }
   .wrapper-find {
     height: calc(100vh - 49px);

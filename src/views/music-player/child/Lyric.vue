@@ -1,21 +1,28 @@
 <template>
   <div class="main" :style="{visibility: getShowLyric}">
-    <ul 
-    class="lyric" 
-    ref="itemList" 
-    @touchstart.stop='touchStart' 
-    @touchmove.stop='touchMove' 
-    @touchend.stop='touchEnd'
-    @click="closeLyric">
-      <li v-for="(item,index) in getRealLyric" :key="index" class="item" :class="{active: currentIndex == index}">{{item}}</li>
-    </ul>
+    <volume-progress-bar></volume-progress-bar>
+    <div class="contain">
+      <ul 
+      class="lyric" 
+      ref="itemList" 
+      @touchstart.stop='touchStart' 
+      @touchmove.stop='touchMove' 
+      @touchend.stop='touchEnd'
+      @click="closeLyric">
+        <li v-for="(item,index) in getRealLyric" :key="index" class="item" :class="{active: currentIndex == index}">{{item}}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
+  import VolumeProgressBar from './VolumeProgressBar'
   import {mapGetters} from 'vuex'
   export default {
     name: 'Lyric',
+    components: {
+      VolumeProgressBar
+    },
     data() {
       return {
         timeArr: [],
@@ -28,7 +35,8 @@
         endY: 0,
         flag: false,
         touchY: 0,
-        marginBottom: 0
+        marginBottom: 0,
+        init: true
       }
     },
     props: {
@@ -138,21 +146,22 @@
     mounted() {
       this.timeUpdate()
       // 歌曲播放结束之后，也需要将索引和偏移量设置为0
-      this.$bus.$on('endedSong', () => {
+      /* this.$bus.$on('endedSong', () => {
         this.currentIndex = 0
         this.offsetY = 0
         this.$refs.itemList.style.transform = `translate(0,-${this.offsetY}px)`
         this.$refs.itemList.style.transform = `0s`
-      })
+      }) */
     },
     watch: {
       // 监听时间的变化，是有小数的时间
       time(val,oldVal) {
         // 该属性是父组件传递下来的，是在用户点击或拖动进度条的时候才触发
-        if(this.changeLyric) {
+        if(this.changeLyric || this.init) {
           this.currentIndex = this.setJumpIndex(val)
           this.setTranslateY(this.currentIndex)
           this.$emit('update:changeLyric', !this.changeLyric)
+          this.init = false
         }
         // 当歌词跳转到最后一句的时候，索引已经是数组里面最大的了，但是因为下面要通过比较他后面一句的所有的时间，那么将会报错，所以要直接return
         if(this.currentIndex >= this.timeArr.length-1) return
@@ -209,6 +218,10 @@
     box-sizing border-box
     padding 0 40px
   }
+  .contain {
+    height calc(100% - 20px)
+    overflow hidden
+  }
   .lyric {
     /* width 100vw
     box-sizing border-box
@@ -216,7 +229,7 @@
     position absolute
     z-index 1
     top 0 */
-    padding 243.5px 0
+    padding 233.5px 0
   }
   .item {
     width 100%

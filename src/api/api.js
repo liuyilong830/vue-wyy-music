@@ -17,6 +17,8 @@ export const emailLogin = (email,password) => get(login.emailLogin, {email,passw
 
 export const swiperList = (type) => get(find.swiper, {type,timestamp: new Date().getTime()})
 export const hotSongs6 = () => get(find.hotSongs6, {timestamp: new Date().getTime()})
+export const styleRecom = (cat) => get(find.styleRecom, {cat, limit: 10})
+export const playDetail = (id) => get(find.playDetail, {id, timestamp: new Date().getTime()})
 
 export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getTime()})
 export const songDetail = (ids) => get(daily.songDetail,{ id: ids.join() , timestamp: new Date().getTime() })

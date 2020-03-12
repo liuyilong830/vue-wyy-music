@@ -121,7 +121,7 @@
       }
     },
     computed: {
-      ...mapGetters(['getSongObj']),
+      ...mapGetters(['getSongObj','getShowSong']),
       getIndex() {
         return this.songs.findIndex(item => item.id == this.getSongObj.id)
       }
@@ -185,6 +185,11 @@
         }
         this.$refs.mask.style.filter = `blur(${this.opacity}px)`
         this.$refs.mask2.style.filter = `blur(${this.opacity}px)`
+      },
+      getSongObj(val,oldVal) {
+        this.$nextTick(() => {
+          this.$refs.content.style.height = this.getHeight((this.songs.length + 1))
+        })
       }
     },
     mounted() {
@@ -195,7 +200,7 @@
           this.load = false
           this.songs = res.recommend
           this.$nextTick(() => {
-            this.$refs.content.style.height = this.getHeight((res.recommend.length+1))
+            this.$refs.content.style.height = this.getHeight((res.recommend.length))
           })
           this.getSongDetail()
         }

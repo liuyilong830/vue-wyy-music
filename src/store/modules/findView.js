@@ -1,12 +1,17 @@
 import {styleRecom,playDetail} from 'api/api.js'
 
 const state = {
-  playlist: {}
+  playlist: {},
+  songDetail: []
 }
 
 const mutations = {
   setStyleRecom(state, result) {
     state.playlist = result
+    if(state.songDetail.length == 12) return 
+    for(var i = 0; i < 12; i++) {
+      state.songDetail.push(result.tracks[i])
+    }
   }
 }
 

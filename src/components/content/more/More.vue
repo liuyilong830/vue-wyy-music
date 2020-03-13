@@ -47,6 +47,11 @@
     font-weight 600
     color #666
     font-size 16px
+    flex 80%
+  }
+  .more {
+    flex 20%
+    text-align right 
   }
   .more span{
     display inline-block

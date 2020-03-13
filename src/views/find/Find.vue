@@ -10,8 +10,9 @@
       <icon-list :classList='classList' @iconClick='iconClick'></icon-list>
 
       <recommend :recommend='recommend'></recommend>
-      <style-rem :playlists='playlist'></style-rem>
-
+      <style-rem :playlists='playlist' :songDetail='styleRecom'></style-rem>
+      <scene-rem :sceneRecom='sceneRecom'></scene-rem>
+      <new-songs-dish :songDetail='newSongsList'></new-songs-dish>
     </b-scroll>
   </div>
 </template>
@@ -22,10 +23,12 @@
   import IconList from 'components/content/five-icon/IconList'
   import Recommend from './child/Recommend.vue'
   import StyleRem from './child/StyleRem'
+  import SceneRem from './child/SceneRem'
+  import NewSongsDish from './child/NewSongsDish'
   import BScroll from 'components/common/betterscroll/BScroll.vue'
   import { Swipe, SwipeItem } from 'vant'
 
-  import {swiperList,hotSongs6} from 'api/api.js'
+  import {swiperList,hotSongs6,sceneRecom,playDetail,styleRecom,newSong} from 'api/api.js'
   import {mapGetters,mapActions,mapState} from 'vuex'
   export default {
     name: 'Find',
@@ -35,13 +38,19 @@
       Recommend,
       BScroll,
       StyleRem,
-      IconList
+      IconList,
+      SceneRem,
+      NewSongsDish
     },
     data() {
       return {
         swiperList: [],
         account: {},
         recommend: [],
+        sceneRecom: [],
+        playlist: {},
+        styleRecom: [],
+        newSongsList: [],
         classList: [
           {title: '每日推荐', cls: 'icon-meirituijian'},
           {title: '歌单', cls: 'icon-gedan'},
@@ -52,11 +61,12 @@
       }
     },
     computed: {
-      ...mapState('findView', ['playlist']),
-      ...mapGetters(['getType','getAccount'])
+      ...mapGetters(['getType','getAccount']),
+      showFindPage() {
+        return this.styleRecom.length !== 0? true : false
+      }
     },
     methods: {
-      ...mapActions('findView',['styleRecom','playDetail']),
       onChange() {
 
       },
@@ -64,25 +74,73 @@
         if(index == 0) {
           this.$router.push('/dailyRem')
         }
+      },
+      // 请求轮播图数据
+      asyncSwipe() {
+        swiperList(this.getType).then(res => {
+          if(res.code === 200) {
+            this.swiperList = res.banners
+          }
+        }).catch(err => {
+          console.log(err.message)
+        })
+      },
+      // 请求推荐歌单
+      asyncHotSongs() {
+        hotSongs6().then(res => {
+          if(res.code === 200) {
+            this.recommend = res.recommend.slice(1,7)
+          }
+        }).catch(err => err.message)
+      },
+      asyncSceneRecom() {
+        sceneRecom('酒吧').then(res => {
+          if(res.code === 200) {
+            if(this.sceneRecom.length !== 0) return 
+            for(var i = 0; i < 6; i++) {
+              this.sceneRecom.push(res.playlists[i])
+            }
+          }
+        }).catch(err => err.message)
+      },
+      asyncStyleRecom() {
+        styleRecom('说唱').then(res => {
+          if(res.code === 200) {
+            return res.playlists[0].id
+          }
+        })
+        .then(id => {
+          playDetail(id).then(data => {
+            if(data.code === 200) {
+              this.playlist = data.playlist
+              if(this.styleRecom.length == 12) return 
+              for(var i = 0; i < 12; i++) {
+                this.styleRecom.push(data.playlist.tracks[i])
+              }
+            }
+          })
+        })
+      },
+      asyncNewSong() {
+        newSong().then(res => {
+          if(this.newSongsList.length !== 0) return
+          if(res.code == 200) {
+            for(var i = 0; i < 6; i++) {
+              this.newSongsList.push(res.result[i])
+            }
+          }
+        })
       }
     },
     created() {
       this.account = this.getAccount
     },
     mounted() {
-      swiperList(this.getType).then(res => {
-        if(res.code === 200) {
-          this.swiperList = res.banners
-        }
-      }).catch(err => {
-        console.log(err.message)
-      })
-      hotSongs6().then(res => {
-        if(res.code === 200) {
-          this.recommend = res.recommend.slice(1,7)
-        }
-      })
-      this.styleRecom('说唱')
+      this.asyncSwipe()
+      this.asyncHotSongs()
+      this.asyncStyleRecom()
+      this.asyncSceneRecom()
+      this.asyncNewSong()
     }
   }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="static-swipe">
+  <div class="static-swipe" v-if="list.length !== 0">
     <div class="content" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd' ref="content" style="transform:translateX(0px)">
       <static-swipe-item v-for="(item,index) in list" :key="index" :item='item'></static-swipe-item>
     </div>
@@ -18,12 +18,12 @@
         startX: 0,
         endX: 0,
         offsetX: 0,
-        contentX: 0,
         contentWidth: 0,
         transX: 0,
         marginBottom: 0,
         currentIndex: 0,
-        width: 0
+        width: 0,
+        maxIndex: 0
       }
     },
     props: {
@@ -32,6 +32,10 @@
         default() {
           return []
         }
+      },
+      touchw: {
+        type: Number,
+        default: 40
       }
     },
     methods: {
@@ -47,12 +51,12 @@
         this.endX = event.touches[0].pageX || event.touches[0].clientX
         // offsetX 为正数则是手指往左划，否则手指往右划
         this.offsetX = this.startX - this.endX
-        if((this.currentIndex <= 0 && this.offsetX < 0) || (this.currentIndex >= 3 && this.offsetX > 0)) return
+        if((this.currentIndex <= 0 && this.offsetX < 0) || (this.currentIndex >= this.maxIndex && this.offsetX > 0)) return
         this.translateX(-(this.transX + this.offsetX))
       },
       touchEnd(event) {
-        if((this.currentIndex <= 0 && this.offsetX < 0) || (this.currentIndex >= 3 && this.offsetX > 0)) return
-        if(Math.abs(this.offsetX) >= 40) {
+        if((this.currentIndex <= 0 && this.offsetX < 0) || (this.currentIndex >= this.maxIndex && this.offsetX > 0)) return
+        if(Math.abs(this.offsetX) >= this.touchw) {
           // 往左划动
           if(this.offsetX >= 0) {
             this.transX = (this.width + this.marginBottom)*(this.currentIndex+1)
@@ -69,9 +73,12 @@
       }
     },
     mounted() {
-      this.contentWidth = this.$refs.content.getBoundingClientRect().width
       this.width = this.$refs.content.children[0].getBoundingClientRect().width
       this.marginBottom = Number(window.getComputedStyle(this.$refs.content.children[0]).marginRight.match(/\d+/g))
+      this.maxIndex = this.list.length/3 - 1
+      this.contentWidth = this.list.length/3 * (this.width + this.marginBottom)
+      // this.contentWidth = this.$refs.content.getBoundingClientRect().width
+      this.$refs.content.style.width = this.contentWidth + 'px'
     }
   }
 </script>
@@ -81,9 +88,7 @@
     overflow: hidden;
   }
   .content {
-    width: 1300px;
+    width: 0px;
     height: 100%;
-    display: flex;
-    flex-wrap: wrap;
   }
 </style>

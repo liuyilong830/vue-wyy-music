@@ -174,6 +174,8 @@
   .player {
     width 100vw
     height 45px
+    position fixed
+    bottom 0
   }
   .playing-song .icon-bofangzhong {
     font-size  28px

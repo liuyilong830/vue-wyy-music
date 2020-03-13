@@ -11,7 +11,7 @@
         <span>查看更多</span>
       </template>
     </more>
-    <top-scroll :bounce='false' :probeType='3' class='x-scroll'>
+    <!-- <top-scroll :bounce='false' :probeType='3' class='x-scroll'>
       <div class='recommend-songs'>
 
         <song-item v-for="(item,index) in recommend" :key="index">
@@ -27,20 +27,19 @@
         </song-item>
 
       </div>
-    </top-scroll>
+    </top-scroll> -->
+    <play-list-det :recommend='recommend'></play-list-det>
   </div>
 </template>
 
 <script>
-  import TopScroll from 'components/common/betterscroll/TopScroll.vue'
-  import SongItem from 'components/content/song-item/SongItem'
   import More from 'components/content/more/More'
+  import PlayListDet from 'components/content/playlist-detail/PlayListDet'
   export default {
     name: 'Recommend',
     components: {
-      TopScroll,
-      SongItem,
-      More
+      More,
+      PlayListDet
     },
     props: {
       recommend: {
@@ -48,18 +47,6 @@
         default() {
           return []
         }
-      }
-    },
-    filters: {
-      playCount(value) {
-        var value = value.toString()
-        if(value.length > 8) {
-          return value.substring(0,value.toString().length - 8) + '亿'
-        }
-        if(value.length >= 5) {
-          return value.substring(0,value.toString().length - 4) + '万'
-        }
-        return value
       }
     },
     methods: {
@@ -99,16 +86,5 @@
     color #666
     border 1px solid #666
     border-radius 12px
-  }
-  .x-scroll {
-    width 100%
-  }
-  .recommend-songs {
-    width 100%
-    display flex
-    justify-content space-between
-  }
-  .recommend-songs .item:last-child {
-    margin-right 0
   }
 </style>

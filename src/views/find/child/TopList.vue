@@ -1,37 +1,32 @@
 <template>
-  <div class="scene-recommend" v-if="sceneRecom.length !== 0">
-    <more @upLoadMore='upLoadMoreBySelect'>
+  <div class="top-list" v-if="topList.length !== 0">
+    <more @upLoadMore='upLoadMoreByStyle'>
       <template v-slot:title>
-        <span>场景推荐</span>
+        <span>排行榜</span>
       </template>
       <template v-slot:blod>
-        <span class="blod-title-text">{{sceneRecom[0].description}}</span>
+        <span class="name">热歌导航指南</span>
       </template>
       <template v-slot:showMore>
         <span>查看更多</span>
       </template>
     </more>
 
-    <play-list-det :recommend='sceneRecom'></play-list-det>
+    <rank-list :topList='topList'></rank-list>
   </div>
 </template>
 
 <script>
   import More from 'components/content/more/More'
-  import PlayListDet from 'components/content/playlist-detail/PlayListDet'
+  import RankList from 'components/content/rank-list/RankList'
   export default {
-    name: 'SceneRem',
+    name: 'TopList',
     components: {
       More,
-      PlayListDet
-    },
-    data() {
-      return {
-        list: []
-      }
+      RankList
     },
     props: {
-      sceneRecom: {
+      topList: {
         type: Array,
         default() {
           return []
@@ -39,18 +34,16 @@
       }
     },
     methods: {
-      upLoadMoreBySelect() {
-
-      }
+      upLoadMoreByStyle() {}
     }
   }
 </script>
 
 <style lang="stylus" scoped>
-  .scene-recommend {
+  .top-list {
     box-sizing border-box
     padding 0 15px
-    margin 10px 0 20px
+    margin 10px 0 0
     width 100vw
   }
 </style>

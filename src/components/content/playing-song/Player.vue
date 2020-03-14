@@ -31,7 +31,8 @@
         index: 0,
         songList: [],
         randomSongList: [],
-        volume: 1
+        volume: 1,
+        flag: true
       }
     },
     computed: {
@@ -61,9 +62,12 @@
         // 当播放的时候，paused的值为false
         if(this.$refs.audio.paused) {
           this.$refs.audio.play()
+          this.flag = true
         } else {
           this.$refs.audio.pause()
+          this.flag = false
         }
+        this.$store.commit('setSongFlag',{btnFlag: this.flag})
       },
       getTime() {
         // audio可以获取当前歌曲播放的时间
@@ -176,6 +180,7 @@
     height 45px
     position fixed
     bottom 0
+    z-index 9999
   }
   .playing-song .icon-bofangzhong {
     font-size  28px

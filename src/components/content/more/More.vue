@@ -48,6 +48,11 @@
     color #666
     font-size 16px
     flex 80%
+    overflow hidden
+    white-space nowrap
+    text-overflow ellipsis
+    display flex
+    align-items center
   }
   .more {
     flex 20%

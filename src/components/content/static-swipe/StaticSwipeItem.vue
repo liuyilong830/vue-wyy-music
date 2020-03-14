@@ -8,10 +8,9 @@
         <span class="title">{{getSongName}}</span>
         <span class="ar">- {{getAuthor}}</span>
       </div>
-      <!-- <span class="title">{{getSongName}}</span> -->
       <span class="describe-name">{{getDescribe}}</span>
     </div>
-    <div class="bofang">
+    <div class="bofang" v-show="flag">
       <span class="iconfont icon-bofang3"></span>
     </div>
   </div>
@@ -26,6 +25,10 @@
         default() {
           return {}
         }
+      },
+      flag: {  // 是否展示播放按钮
+        type: Boolean,
+        default: true
       }
     },
     computed: {
@@ -42,13 +45,17 @@
       getAuthor() {
         if(this.item.ar) {
           return this.item.ar[0].name
-        }else {
+        } else if(this.item.artists) {
+          return this.item.artists[0].name
+        } else {
           return this.item.song.artists[0].name
         }
       },
       getDescribe() {
         if(this.item.al) {
           return this.item.al.name
+        } else if(this.item.alias) {
+          return this.item.alias || this.item.name
         } else {
           return this.item.song.album.name
         }

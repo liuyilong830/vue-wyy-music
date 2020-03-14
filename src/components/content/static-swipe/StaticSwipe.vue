@@ -1,7 +1,7 @@
 <template>
   <div class="static-swipe" v-if="list.length !== 0">
     <div class="content" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd' ref="content" style="transform:translateX(0px)">
-      <static-swipe-item v-for="(item,index) in list" :key="index" :item='item'></static-swipe-item>
+      <static-swipe-item v-for="(item,index) in list" :key="index+item" :item='item' :flag='flag'></static-swipe-item>
     </div>
   </div>
 </template>
@@ -36,6 +36,10 @@
       touchw: {
         type: Number,
         default: 40
+      },
+      flag: {
+        type: Boolean,
+        default: true
       }
     },
     methods: {

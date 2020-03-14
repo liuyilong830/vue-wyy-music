@@ -52,7 +52,7 @@
             <span class="iconfont icon-shangyishoushangyige" @click="beforeClick"></span>
           </template>
           <template v-slot:isStop>
-            <span class="iconfont icon-bofang4" @click="startOrstopSong" v-if="start"></span>
+            <span class="iconfont icon-bofang4" @click="startOrstopSong" v-if="getSongFlag.btnFlag"></span>
             <span class="iconfont icon-bofang3" @click="startOrstopSong" v-else></span>
           </template>
           <template v-slot:isNext>

@@ -3,5 +3,8 @@ export const find = {
   hotSongs6: '/recommend/resource',
   recom: '/top/playlist',
   playDetail: '/playlist/detail',
-  newSong: '/personalized/newsong'
+  newSong: '/personalized/newsong',
+  catlist: '/playlist/catlist',
+  newDish: '/top/album',
+  topList: '/top/list'
 }

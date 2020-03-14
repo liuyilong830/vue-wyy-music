@@ -12,7 +12,8 @@
       <recommend :recommend='recommend'></recommend>
       <style-rem :playlists='playlist' :songDetail='styleRecom'></style-rem>
       <scene-rem :sceneRecom='sceneRecom'></scene-rem>
-      <new-songs-dish :songDetail='newSongsList'></new-songs-dish>
+      <new-songs-dish :songDetail='newSongsList' :newDishsList='newDishsList'></new-songs-dish>
+      <top-list :topList='topList5' v-if="topList5.length == 5"></top-list>
     </b-scroll>
   </div>
 </template>
@@ -25,10 +26,11 @@
   import StyleRem from './child/StyleRem'
   import SceneRem from './child/SceneRem'
   import NewSongsDish from './child/NewSongsDish'
+  import TopList from './child/TopList'
   import BScroll from 'components/common/betterscroll/BScroll.vue'
   import { Swipe, SwipeItem } from 'vant'
 
-  import {swiperList,hotSongs6,sceneRecom,playDetail,styleRecom,newSong} from 'api/api.js'
+  import {swiperList,hotSongs6,sceneRecom,playDetail,styleRecom,newSong,getCatlist,newDish,getTopList} from 'api/api.js'
   import {mapGetters,mapActions,mapState} from 'vuex'
   export default {
     name: 'Find',
@@ -40,7 +42,8 @@
       StyleRem,
       IconList,
       SceneRem,
-      NewSongsDish
+      NewSongsDish,
+      TopList
     },
     data() {
       return {
@@ -57,7 +60,14 @@
           {title: '排行榜', cls: 'icon-paixingbang-copy'},
           {title: '电台', cls: 'icon-diantai'},
           {title: '直播', cls: 'icon-zhibo'}
-        ]
+        ],
+        style: [],  // 风格
+        scene: [],  // 场景
+        emotion: [], // 情感
+        theme: [], // 主题
+        languages: [], // 语种
+        newDishsList: [],  // 新碟
+        topList5: []
       }
     },
     computed: {
@@ -93,8 +103,8 @@
           }
         }).catch(err => err.message)
       },
-      asyncSceneRecom() {
-        sceneRecom('酒吧').then(res => {
+      asyncSceneRecom(name) {
+        sceneRecom(name).then(res => {
           if(res.code === 200) {
             if(this.sceneRecom.length !== 0) return 
             for(var i = 0; i < 6; i++) {
@@ -103,8 +113,8 @@
           }
         }).catch(err => err.message)
       },
-      asyncStyleRecom() {
-        styleRecom('说唱').then(res => {
+      asyncStyleRecom(name) {
+        styleRecom(name).then(res => {
           if(res.code === 200) {
             return res.playlists[0].id
           }
@@ -130,6 +140,64 @@
             }
           }
         })
+      },
+      asyncGetCatlist() {
+        if(this.languages.length !== 0) return
+        getCatlist().then(res => {
+          if(res.code == 200) {
+            for(var item of res.sub) {
+              if(item.category == 0) this.languages.push(item)
+              if(item.category == 1) this.style.push(item)
+              if(item.category == 2) this.scene.push(item)
+              if(item.category == 3) this.emotion.push(item)
+              if(item.category == 4) this.theme.push(item)
+            }
+          }
+          this.asyncStyleRecom(this.style[Math.floor(Math.random()* this.style.length)].name)
+          this.asyncSceneRecom(this.scene[Math.floor(Math.random()* this.scene.length)].name)
+        })
+      },
+      asyncNewDish() {
+        newDish().then(res => {
+          if(this.newDishsList.length !== 0) return
+          if(res.code == 200) {
+            for(var i = 0; i < res.albums.length; i++) {
+              this.newDishsList.push(res.albums[i])
+            }
+          }
+        })
+      },
+      asyncTopList(num) {
+        if(this.topList5.length !== 0) return
+        var arr = []
+        for(var item of this.randomNum(num,34)) {
+          getTopList(item).then(res => {
+            if(res.code === 200) {
+              this.topList5.push(res.playlist)
+            }
+          })
+        }
+        
+      },
+      /**
+       * 输入需要得到的随机数的个数和可选的范围，返回一个数组，里面包含随机项的数字
+       */
+      randomNum(n,end) {
+        var initArr = []
+        for(var k = 0; k < end; k++) {
+          initArr.push(k)
+        }
+        var arr = []
+        var num = 0
+        var index = 0
+        var length = initArr.length
+        while(length > 0) {
+          num = Math.floor(Math.random()*initArr.length)
+          arr.push(initArr[num])
+          initArr.splice(num,1)
+          if(arr.length == n) break
+        }
+        return arr
       }
     },
     created() {
@@ -138,9 +206,10 @@
     mounted() {
       this.asyncSwipe()
       this.asyncHotSongs()
-      this.asyncStyleRecom()
-      this.asyncSceneRecom()
+      this.asyncGetCatlist()
       this.asyncNewSong()
+      this.asyncNewDish()
+      this.asyncTopList(5)
     }
   }
 </script>

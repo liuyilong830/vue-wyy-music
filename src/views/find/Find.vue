@@ -19,8 +19,6 @@
 </template>
 
 <script>
-  import MySwiper from 'components/common/swiper/MySwiper.vue'
-  import SwiperList from 'components/common/swiper/SwiperList.vue'
   import IconList from 'components/content/five-icon/IconList'
   import Recommend from './child/Recommend.vue'
   import StyleRem from './child/StyleRem'
@@ -31,7 +29,7 @@
   import { Swipe, SwipeItem } from 'vant'
 
   import {swiperList,hotSongs6,sceneRecom,playDetail,styleRecom,newSong,getCatlist,newDish,getTopList} from 'api/api.js'
-  import {mapGetters,mapActions,mapState} from 'vuex'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'Find',
     components: {
@@ -73,7 +71,7 @@
     computed: {
       ...mapGetters(['getType','getAccount']),
       showFindPage() {
-        return this.styleRecom.length !== 0? true : false
+        return this.styleRecom.length !== 0
       }
     },
     methods: {
@@ -81,7 +79,7 @@
 
       },
       iconClick(index) {
-        if(index == 0) {
+        if(index === 0) {
           this.$router.push('/dailyRem')
         }
       },
@@ -106,8 +104,8 @@
       asyncSceneRecom(name) {
         sceneRecom(name).then(res => {
           if(res.code === 200) {
-            if(this.sceneRecom.length !== 0) return 
-            for(var i = 0; i < 6; i++) {
+            if(this.sceneRecom.length !== 0) return;
+            for(let i = 0; i < 6; i++) {
               this.sceneRecom.push(res.playlists[i])
             }
           }
@@ -122,9 +120,9 @@
         .then(id => {
           playDetail(id).then(data => {
             if(data.code === 200) {
-              this.playlist = data.playlist
-              if(this.styleRecom.length == 12) return 
-              for(var i = 0; i < 12; i++) {
+              this.playlist = data.playlist;
+              if(this.styleRecom.length === 12) return;
+              for(let i = 0; i < 12; i++) {
                 this.styleRecom.push(data.playlist.tracks[i])
               }
             }
@@ -134,8 +132,8 @@
       asyncNewSong() {
         newSong().then(res => {
           if(this.newSongsList.length !== 0) return
-          if(res.code == 200) {
-            for(var i = 0; i < 6; i++) {
+          if(res.code === 200) {
+            for(let i = 0; i < 6; i++) {
               this.newSongsList.push(res.result[i])
             }
           }
@@ -144,13 +142,13 @@
       asyncGetCatlist() {
         if(this.languages.length !== 0) return
         getCatlist().then(res => {
-          if(res.code == 200) {
-            for(var item of res.sub) {
-              if(item.category == 0) this.languages.push(item)
-              if(item.category == 1) this.style.push(item)
-              if(item.category == 2) this.scene.push(item)
-              if(item.category == 3) this.emotion.push(item)
-              if(item.category == 4) this.theme.push(item)
+          if(res.code === 200) {
+            for(let item of res.sub) {
+              if(item.category === 0) this.languages.push(item)
+              if(item.category === 1) this.style.push(item)
+              if(item.category === 2) this.scene.push(item)
+              if(item.category === 3) this.emotion.push(item)
+              if(item.category === 4) this.theme.push(item)
             }
           }
           this.asyncStyleRecom(this.style[Math.floor(Math.random()* this.style.length)].name)
@@ -161,23 +159,22 @@
         newDish().then(res => {
           if(this.newDishsList.length !== 0) return
           if(res.code == 200) {
-            for(var i = 0; i < res.albums.length; i++) {
+            for(let i = 0; i < res.albums.length; i++) {
               this.newDishsList.push(res.albums[i])
             }
           }
         })
       },
       asyncTopList(num) {
-        if(this.topList5.length !== 0) return
-        var arr = []
-        for(var item of this.randomNum(num,34)) {
+        if(this.topList5.length !== 0) return;
+        let arr = [];
+        for(let item of this.randomNum(num,34)) {
           getTopList(item).then(res => {
             if(res.code === 200) {
               this.topList5.push(res.playlist)
             }
           })
         }
-        
       },
       /**
        * 输入需要得到的随机数的个数和可选的范围，返回一个数组，里面包含随机项的数字

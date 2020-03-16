@@ -77,7 +77,6 @@
       }
     },
     mounted() {
-      console.log(this.topList.length)
       this.width = this.$refs.contain.children[0].getBoundingClientRect().width
       this.marginBottom = Number(window.getComputedStyle(this.$refs.contain.children[0]).marginRight.match(/\d+/g))
       this.maxIndex = this.topList.length-1

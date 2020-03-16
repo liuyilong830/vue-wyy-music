@@ -24,6 +24,7 @@ export const playDetail = (id) => get(find.playDetail, {id, timestamp: new Date(
 export const newSong = () => get(find.newSong, {timestamp: new Date().getTime()})
 export const newDish = (limit = 6) => get(find.newDish, {limit, timestamp: new Date().getTime()})
 export const getTopList = (idx) => get(find.topList, {idx, timestamp: new Date().getTime()})
+export const getDjprogram = () => get(find.djprogram, {timestamp: new Date().getTime()})
 
 export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getTime()})
 export const songDetail = (ids) => get(daily.songDetail,{ id: ids.join() , timestamp: new Date().getTime() })

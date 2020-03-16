@@ -6,5 +6,6 @@ export const find = {
   newSong: '/personalized/newsong',
   catlist: '/playlist/catlist',
   newDish: '/top/album',
-  topList: '/top/list'
+  topList: '/top/list',
+  djprogram: '/personalized/djprogram'
 }

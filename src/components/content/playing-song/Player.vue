@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" @click.capture="captureClick">
     <playing-song class="playing-song" v-if="getShowSong.length !== 0">
       <template v-slot:Album>
         <img :src="getShowSong[0].album.blurPicUrl" @click="openPlayer" alt="">
@@ -57,6 +57,9 @@
       }
     },
     methods: {
+      captureClick() {
+      
+      },
       // 播放和暂停操作
       playClick() {
         // 当播放的时候，paused的值为false

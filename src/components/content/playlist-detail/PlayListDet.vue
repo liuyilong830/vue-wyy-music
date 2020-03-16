@@ -5,7 +5,7 @@
 
         <song-item v-for="(item,index) in recommend" :key="index">
           <template v-slot:count>
-            <span>{{item.playcount || item.playCount | playCount}}</span>
+            <span>{{item.playcount || item.playCount | playCountFilter}}</span>
           </template>
           <template v-slot:image>
             <img :src="item.picUrl || item.coverImgUrl" alt="">
@@ -40,7 +40,8 @@
       }
     },
     filters: {
-      playCount(value) {
+      playCountFilter(value) {
+        if(!value) return ''
         var value = value.toString()
         if(value.length > 8) {
           return value.substring(0,value.toString().length - 8) + '亿'
@@ -52,7 +53,7 @@
       }
     },
     computed: {
-      
+    
     }
   }
 </script>

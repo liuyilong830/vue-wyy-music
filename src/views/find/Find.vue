@@ -1,6 +1,6 @@
 <template>
   <div class="home-find" v-if="swiperList.length !== 0">
-    <b-scroll class='wrapper-find' :probeType='3'>
+    <b-scroll class='wrapper-find' :probeType='3' ref="wrapper_find">
       <van-swipe :autoplay="3000" indicator-color="white" class='my-swipe'>
         <van-swipe-item v-for='(item,index) in swiperList' :key='index'>
           <img :src="item.pic || item.imageUrl" alt="">
@@ -14,6 +14,12 @@
       <scene-rem :sceneRecom='sceneRecom'></scene-rem>
       <new-songs-dish :songDetail='newSongsList' :newDishsList='newDishsList'></new-songs-dish>
       <top-list :topList='topList5' v-if="topList5.length == 5"></top-list>
+      <dj-program :djprogram="djprogramList"></dj-program>
+      
+      <div class="refresh">
+        <span class="btn" @click="refreshClick">点击刷新</span>
+        <span class="refresh-text">换一批内容</span>
+      </div>
     </b-scroll>
   </div>
 </template>
@@ -25,10 +31,11 @@
   import SceneRem from './child/SceneRem'
   import NewSongsDish from './child/NewSongsDish'
   import TopList from './child/TopList'
+  import DjProgram from './child/DjProgram'
   import BScroll from 'components/common/betterscroll/BScroll.vue'
   import { Swipe, SwipeItem } from 'vant'
 
-  import {swiperList,hotSongs6,sceneRecom,playDetail,styleRecom,newSong,getCatlist,newDish,getTopList} from 'api/api.js'
+  import {swiperList,hotSongs6,sceneRecom,playDetail,styleRecom,newSong,getCatlist,newDish,getTopList,getDjprogram} from 'api/api.js'
   import { mapGetters } from 'vuex'
   export default {
     name: 'Find',
@@ -41,7 +48,8 @@
       IconList,
       SceneRem,
       NewSongsDish,
-      TopList
+      TopList,
+      DjProgram
     },
     data() {
       return {
@@ -65,22 +73,29 @@
         theme: [], // 主题
         languages: [], // 语种
         newDishsList: [],  // 新碟
-        topList5: []
+        topList5: [],
+        djprogramList: []
       }
     },
     computed: {
-      ...mapGetters(['getType','getAccount']),
+      ...mapGetters(['getType','getAccount','getSongObj']),
       showFindPage() {
         return this.styleRecom.length !== 0
       }
     },
     methods: {
+      refreshClick() {
+        console.log(111)
+        history.go(0)
+      },
       onChange() {
 
       },
       iconClick(index) {
         if(index === 0) {
           this.$router.push('/dailyRem')
+        } else if(index === 1) {
+          this.$router.push('/playlist')
         }
       },
       // 请求轮播图数据
@@ -176,6 +191,13 @@
           })
         }
       },
+      asyncDjprogram() {
+        getDjprogram().then(res => {
+          if(res.code === 200) {
+            this.djprogramList = res.result
+          }
+        })
+      },
       /**
        * 输入需要得到的随机数的个数和可选的范围，返回一个数组，里面包含随机项的数字
        */
@@ -207,6 +229,14 @@
       this.asyncNewSong()
       this.asyncNewDish()
       this.asyncTopList(5)
+      this.asyncDjprogram()
+    },
+    watch: {
+      getSongObj(val,oldVal) {
+        this.$nextTick(() => {
+          this.$refs.wrapper_find.$el.children[0].style.paddingBottom = '45px'
+        })
+      }
     }
   }
 </script>
@@ -231,5 +261,20 @@
     width: 100%;
     vertical-align: top;
     border-radius: 15px;
+  }
+  .refresh {
+    width: 150px;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 auto;
+    font-size: 13px;
+    text-align: center;
+  }
+  .refresh .btn {
+    color: #2fc1f1;
+  }
+  .refresh .refresh-text {
+    color: #cccccc;
+    padding-left: 7px;
   }
 </style>

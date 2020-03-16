@@ -21,5 +21,5 @@
 </script>
 
 <style lang="stylus" scoped>
-  @import url('http://at.alicdn.com/t/font_1668893_244of6m2r8zj.css');
+  @import url('http://at.alicdn.com/t/font_1668893_yxrdxjkt31.css');
 </style>

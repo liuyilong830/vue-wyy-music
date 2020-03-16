@@ -10,11 +10,13 @@ const Cloud  = () => import('views/cloud/Cloud.vue')
 const Video = () => import('views/video/Video.vue')
 const DailyRecommend = () => import('views/Daily/DailyRecommend')
 const MusicPlayer = () => import('views/music-player/MusicPlayer')
+const PlayList = () => import('views/play-list/PlayList')
 
 const routes = [
   { path: '/' , redirect: '/login'},
   { path: '/login' , component: Login },
   { path: '/find' , component: Find , meta:{showTabBar:true, showPlayer:true} },
+  { path: '/playlist' , component: PlayList , meta:{showTabBar: false, showPlayer: false}},
   { path: '/profile' , component: Profile , meta:{showTabBar:true, showPlayer:true} },
   { path: '/cloud' , component: Cloud , meta:{showTabBar:true, showPlayer:true} },
   { path: '/video' , component: Video , meta:{showTabBar:true, showPlayer:true} },

@@ -43,15 +43,14 @@
 <style lang="stylus" scoped>
   .top-scroll-recom {
     width: 100vw;
-    height: 49px;
+    height: 50px;
     box-sizing border-box
     padding 10px 15px 0
     display flex
-    border-bottom 1px solid #f5f5f5
+    border-bottom 1px solid #f5f5f547
   }
   .scroll {
     width: calc(100% - 30px);
-    background-color #f5f5f5
     overflow auto
   }
   .scroll::-webkit-scrollbar{

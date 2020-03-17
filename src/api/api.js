@@ -4,6 +4,7 @@ import {login} from './module/login'
 import {find} from './module/find'
 import {daily} from './module/daily'
 import {song} from './module/song'
+import {playList} from './module/playList'
 
 export const getSwiperList = () => get(home.swiper)
 
@@ -25,6 +26,8 @@ export const newSong = () => get(find.newSong, {timestamp: new Date().getTime()}
 export const newDish = (limit = 6) => get(find.newDish, {limit, timestamp: new Date().getTime()})
 export const getTopList = (idx) => get(find.topList, {idx, timestamp: new Date().getTime()})
 export const getDjprogram = () => get(find.djprogram, {timestamp: new Date().getTime()})
+
+export const topPlayList = (limit = 33) => get(playList.topPlayList, {limit, timestamp: new Date().getTime()})
 
 export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getTime()})
 export const songDetail = (ids) => get(daily.songDetail,{ id: ids.join() , timestamp: new Date().getTime() })

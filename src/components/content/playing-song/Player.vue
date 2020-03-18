@@ -149,7 +149,8 @@
       },
       // 点击图片打开播放器
       openPlayer() {
-        this.$router.push('/dailyRem/music')
+        // this.$router.push('/music')
+        this.$store.commit('showMusicPlayer', true)
       }
     },
     mounted() {
@@ -170,6 +171,7 @@
       this.$bus.$on('beforeSong', () => {
         this.before()
       })
+      // 调增音量
       this.$bus.$on('changeVolume', Proportion => {
         this.volume = Proportion
       })

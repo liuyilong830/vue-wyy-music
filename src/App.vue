@@ -5,17 +5,32 @@
       <router-view></router-view>
     </keep-alive>
     <player v-show="$route.meta.showPlayer"></player>
+    <music-player v-if="getShow" v-model="getShow"></music-player>
   </div>
 </template>
 
 <script>
   import MainTabBar from 'components/content/tabbar/MainTabBar'
   import Player from 'components/content/playing-song/Player.vue'
+  import MusicPlayer from 'views/music-player/MusicPlayer'
+  import {mapGetters} from 'vuex'
   export default {
     name: 'App',
     components: {
       MainTabBar,
-      Player
+      Player,
+      MusicPlayer
+    },
+    data() {
+      return {
+        isShow: false
+      }
+    },
+    computed: {
+      ...mapGetters(['getShowMusicPlayer']),
+      getShow() {
+        return this.isShow = this.getShowMusicPlayer
+      }
     }
   }
 </script>

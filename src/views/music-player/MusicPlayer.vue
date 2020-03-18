@@ -100,6 +100,10 @@
         changeLyric: false
       }
     },
+    model: {
+      prop: 'val1',
+      event: 'chick'
+    },
     computed: {
       ...mapGetters(['getPlayingSong','getSongsDetail','getSongObj','getShowSong','getSongFlag']),
       currentTime() {
@@ -131,7 +135,7 @@
     methods: {
       // NavBar的返回按钮
       confirmBack() {
-        this.$router.go(-1)
+        this.$store.commit('showMusicPlayer', false)
       },
       // 显示歌词
       showLyric() {
@@ -222,6 +226,7 @@
       }
     },
     mounted() {
+      console.log(111)
       this.setStyleBg()
       this.onTimeUpdate()
       this.setInitSongFlag()
@@ -269,7 +274,7 @@
     height 100%
     position fixed
     top 0
-    z-index 1000
+    z-index 10000
   }
   .musicPlayer::before {
     content ''

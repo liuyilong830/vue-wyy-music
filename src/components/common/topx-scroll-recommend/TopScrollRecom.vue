@@ -2,13 +2,13 @@
   <div class="top-scroll-recom">
     <div class="scroll">
       <div class="content" ref="content">
-        <div class="recom-item" v-for="(item,index) in list" :key="index" @click="jumpRecom(index)" :class="{active: currentIndex == index}">{{item}}</div>
+        <div class="recom-item" v-for="(item,index) in list" :key="index" @click="jumpRecom(index)" :class="{active: currentIndex == index}">{{item.name}}</div>
         <div class="border">
           <div class="active-border" ref="active_border"></div>
         </div>
       </div>
     </div>
-    <div class="recom-icon">
+    <div class="recom-icon" @click="showAllRecommend">
       <span class="iconfont icon-leimupinleifenleileibie1"></span>
     </div>
   </div>
@@ -20,7 +20,16 @@
     components: {},
     data() {
       return {
-        list: ['推荐','官方','精品','华语','说唱','流行','民谣','电子'],
+        list: [
+          {name: '推荐', path: '/playlist/recommend'},
+          {name: '官方', path: '/playlist/official'},
+          {name: '精品', path: '/playlist/boutique'},
+          {name: '华语', path: '/playlist/chinese'},
+          {name: '说唱', path: '/playlsit/rap'},
+          {name: '流行', path: '/playlsit/popular'},
+          {name: '民谣', path: '/playlsit/ballad'},
+          {name: '电子', path: '/playlsit/electron'},
+        ],
         currentIndex: 0,
         space: 0,  // 记录两个元素之间的间隔距离
         nodeWidth: 0
@@ -29,8 +38,12 @@
     methods: {
       jumpRecom(index) {
         this.currentIndex = index
+        this.$router.replace(this.list[this.currentIndex].path)
         this.$refs.active_border.style.transform = `translateX(${index * (this.nodeWidth + this.space)}px)`
         this.$refs.active_border.style.transition = '.3s'
+      },
+      showAllRecommend() {
+        this.$emit('showAllRecommend')
       }
     },
     mounted() {
@@ -48,6 +61,7 @@
     padding 10px 15px 0
     display flex
     border-bottom 1px solid #f5f5f547
+    color #292828
   }
   .scroll {
     width: calc(100% - 30px);
@@ -70,7 +84,7 @@
     
     }
     .active {
-      color indianred
+      color #e61818
       font-weight bold
     }
     .border {
@@ -81,7 +95,7 @@
       .active-border {
         width: 32px;
         height: 3px;
-        background-color indianred
+        background-color #e61818
       }
     }
   }

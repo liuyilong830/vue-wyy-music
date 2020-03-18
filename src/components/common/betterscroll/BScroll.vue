@@ -49,7 +49,7 @@
             scrollX: this.scrollX,
             bounce: this.bounce // 关闭better-scroll 的弹簧效果
           })
-          // 将上拉加载的方法通过 $emit 传到 Hot.vue 组件中
+          // 将上拉加载的方法通过 $emit 传到 父组件中
           this.scroll.on('pullingUp',() => {
             this.$emit('pullingUp',this.scroll);
           })

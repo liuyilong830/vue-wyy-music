@@ -67,8 +67,6 @@
         <van-loading type="spinner" v-show="load"/>
       </div>
     </b-scroll>
-
-    <router-view v-if="routerViewShow"></router-view>
   </div>
 </template>
 
@@ -145,7 +143,8 @@
         // 默认随便点击一首都是将整个列表都加入到播放列表中
         this.$store.commit('setSongList', {songs: this.songs , songsDetail: this.realSongDet})
         this.$store.commit('changeSongObj',this.songObj)
-        this.$router.push('/dailyRem/music')
+        // 显示音乐播放器
+        this.$store.commit('showMusicPlayer', true)
       },
       // 获取歌曲的详情
       getSongDetail() {

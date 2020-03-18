@@ -49,5 +49,8 @@ export const mutations = {
   },
   setSongFlag(state,payload) {
     state.songFlag = Object.assign(state.songFlag, payload)
+  },
+  showMusicPlayer(state, payload) {
+    state.show = payload
   }
 }

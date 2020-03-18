@@ -28,5 +28,8 @@ export const getters = {
   },
   getSongFlag(state) {
     return state.songFlag
+  },
+  getShowMusicPlayer(state) {
+    return state.show
   }
 }

@@ -26,7 +26,8 @@ const state = {
     currentTime: 0,
     currentLength: 0,
     current: 0
-  }
+  },
+  show: false // 控制音乐播放器的显示和隐藏
 }
 
 export default new Vuex.Store({

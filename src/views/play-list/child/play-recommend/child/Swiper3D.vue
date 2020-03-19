@@ -1,6 +1,6 @@
 ﻿<template>
   <div>
-    <div class="swiper-3d" @touchstart="ontouchstart" @touchmove="ontouchmove" @touchend="ontouchend" ref="swiper_3d">
+    <div class="swiper-3d" @touchstart.stop="ontouchstart" @touchmove.stop="ontouchmove" @touchend.stop="ontouchend" ref="swiper_3d">
       <div class="block" v-for="(item,index) in topThree" :key="index">
         <div class="img">
           <img :src="item.coverImgUrl" alt="">

@@ -17,13 +17,20 @@
             <span class="shuoming">&nbsp;&nbsp;(长按可编辑)</span>
           </template>
           <template v-slot:btn>
-            <span class="bainji">编辑</span>
+            <span class="bainji" v-if="!flag" @click="setFlag">编辑</span>
+            <span class="wancheng" v-else @click="setFlag">完成</span>
           </template>
           <template v-slot:label-item>
-            <div class="label-item" v-for="(item,index) in myLables" :key="index">
-              <div class="border" @touchstart="touchStart" @touchend="touchEnd">
-                <span>{{item}}</span>
-              </div>
+            <div class="label-list1">
+              <transition-group name="list" tag="ul">
+                <li class="label-item" v-for="(item,index) in list" :key="index" ref="myLabels">
+                  <div class="border" @touchstart="touchStart" @touchend="touchEnd" :class="{flex: flag}" @click="deleteItem(index)">
+                    <span class="iconfont icon-hot" v-if="item.hot && !flag"></span>
+                    <span v-if="flag" class="public">-</span>
+                    <span class="item-name">{{item.name}}</span>
+                  </div>
+                </li>
+              </transition-group>
             </div>
           </template>
         </labels>
@@ -32,9 +39,15 @@
             <span>{{item.name}}</span>
           </template>
           <template v-slot:label-item>
-            <div class="label-item" v-for="(value,i) in item.list" :key="i">
-              <div class="border" :class="{active: value.name == myLables.find(val => val == value.name)}" @touchstart="touchStart" @touchend="touchEnd">
-                <span>{{value.name}}</span>
+            <div class="label-item" v-for="(value,i) in item.list" :key="i" :ref="`labelItem${index}_${i}`">
+              <div class="border"
+                   :class="{active: list.find(val => val.name == value.name), flex: flag}"
+                   @touchstart="touchStart"
+                   @touchend="touchEnd"
+                   @click="addLabel(value,i,index)">
+                <span class="iconfont icon-hot" v-if="value.hot && !flag"></span>
+                <span v-if="flag" class="public">+</span>
+                <span class="item-name">{{value.name}}</span>
               </div>
             </div>
           </template>
@@ -58,7 +71,6 @@
     },
     data() {
       return {
-        myLables: ['推荐','官方','精品','华语','说唱','流行','民谣','电子'],
         labels: [],
         timer: null,
         time: 0,
@@ -69,9 +81,20 @@
       prop: 'val1',
       event: 'click'
     },
+    props: {
+      list: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
+    },
     methods: {
       confirmBack() {
         this.$emit('click', !this.$attrs.val1)
+      },
+      setFlag() {
+        this.flag = !this.flag
       },
       // 将获取到的分类列表插入到对应的对象中
       setLables(length,data,items) {
@@ -86,11 +109,19 @@
         this.time = 0
         this.timer = setInterval(() => {
           this.time ++
+          if(this.time >= 1) this.flag = true
         }, 1000)
       },
       touchEnd() {
         clearInterval(this.timer)
-        if(this.time > 1) this.flag = true
+      },
+      addLabel(value,i,index) {
+        if(!this.flag || this.list.find(val => val == value.name)) return
+        this.list.push({hot: value.hot , name: value.name})
+      },
+      deleteItem(index) {
+        if(!this.flag) return
+        this.list.splice(index, 1)
       }
     },
     mounted() {
@@ -137,6 +168,14 @@
     font-size 12px
     color #e85515
   }
+  .wancheng {
+    padding 2px 10px
+    border 1px solid #e85515
+    border-radius 10px
+    font-size 12px
+    color #fff
+    background-color #e85515
+  }
   .label-item {
     width: (100% / 4);
     height: 30px;
@@ -152,10 +191,59 @@
       display flex
       justify-content center
       align-items center
+      text-align center
       font-size 12px
+      .icon-hot {
+        width: 20px;
+        color red
+      }
+      .item-name {
+         width: (100% - 35px);
+         text-overflow ellipsis
+         overflow hidden
+         white-space nowrap
+       }
+    }
+    .flex {
+      width: 90%;
+      height: 100%;
+      border-radius 23px
+      background-color #f5f5f5
+      display flex
+      justify-content center
+      align-items center
+      font-size 12px
+      text-align center
+      .public {
+        width: 20px;
+        font-size 16px
+      }
+      .item-name {
+        width: (100% - 35px);
+        text-overflow ellipsis
+        overflow hidden
+        white-space nowrap
+      }
     }
     .active {
       opacity .5
     }
+  }
+  .label-list1 {
+    display flex
+    flex-wrap wrap
+    width: 100%;
+  }
+  .label-list1 ul:nth-child(1) {
+    display flex
+    flex-wrap wrap
+    width: 100%;
+  }
+  .list-enter, .list-leave-to {
+    opacity: 0;
+    transform: translate(0,60px);
+  }
+  .list-enter-active, .list-leave-active {
+    transition: all 1s;
   }
 </style>

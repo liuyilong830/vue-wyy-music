@@ -21,9 +21,12 @@
 
 <style lang="stylus" scoped>
   .play-official {
-  
+    width: 100vw;
+    height: calc(100vh - 90px);
+    box-sizing border-box
+    padding 0 15px
   }
   .play-official-scroll {
-    height: calc(100vh - 100px);
+    height 100%
   }
 </style>

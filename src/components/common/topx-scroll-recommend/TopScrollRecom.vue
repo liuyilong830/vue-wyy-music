@@ -1,11 +1,12 @@
 ﻿<template>
-  <div class="top-scroll-recom">
+  <div class="top-scroll-recom" v-if="list.length !== 0">
     <div class="scroll">
       <div class="content" ref="content">
         <div class="recom-item" v-for="(item,index) in list" :key="index" @click="jumpRecom(index)" :class="{active: currentIndex == index}">{{item.name}}</div>
-        <div class="border">
-          <div class="active-border" ref="active_border"></div>
-        </div>
+        
+      </div>
+      <div class="border" ref="border">
+        <div class="active-border" ref="active_border"></div>
       </div>
     </div>
     <div class="recom-icon" @click="showAllRecommend">
@@ -20,35 +21,71 @@
     components: {},
     data() {
       return {
-        list: [
-          {name: '推荐', path: '/playlist/recommend'},
-          {name: '官方', path: '/playlist/official'},
-          {name: '精品', path: '/playlist/boutique'},
-          {name: '华语', path: '/playlist/chinese'},
-          {name: '说唱', path: '/playlsit/rap'},
-          {name: '流行', path: '/playlsit/popular'},
-          {name: '民谣', path: '/playlsit/ballad'},
-          {name: '电子', path: '/playlsit/electron'},
-        ],
-        currentIndex: 0,
         space: 0,  // 记录两个元素之间的间隔距离
-        nodeWidth: 0
+        marginLeft: 0,
+        marginRight: 0,
+        contentWidth: 0,
+        itemsWidth: [],
+        offsetX: 0
+      }
+    },
+    props: {
+      list: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      currentIndex: {
+        type: Number,
+        default: 0
       }
     },
     methods: {
       jumpRecom(index) {
-        this.currentIndex = index
-        this.$router.replace(this.list[this.currentIndex].path)
-        this.$refs.active_border.style.transform = `translateX(${index * (this.nodeWidth + this.space)}px)`
-        this.$refs.active_border.style.transition = '.3s'
+        this.$emit('setCurrentIndex', index)
       },
       showAllRecommend() {
         this.$emit('showAllRecommend')
+      },
+      getNodeLength(dom) {
+        let nodeWidth = window.getComputedStyle(dom).width
+        this.itemsWidth.push(Number(nodeWidth.substring(0,nodeWidth.length-2)))
+        return this.marginLeft + this.marginRight + Number(nodeWidth.substring(0,nodeWidth.length-2))
+      },
+      getContentWidth() {
+        let marginLeft = window.getComputedStyle(this.$refs.content.children[1]).marginLeft
+        let marginRight = window.getComputedStyle(this.$refs.content.children[1]).marginRight
+        this.marginLeft = Number(marginLeft.substring(0,marginLeft.length-2))
+        this.marginRight = Number(marginRight.substring(0,marginRight.length-2))
+        for(let i = 0; i < this.$refs.content.children.length; i++) {
+          this.contentWidth += this.getNodeLength(this.$refs.content.children[i])
+        }
+        this.$refs.content.style.width = this.$refs.border.style.width = (this.contentWidth - this.marginLeft) + 'px'
+        
       }
     },
     mounted() {
-      this.nodeWidth = this.$refs.content.children[0].getBoundingClientRect().width
-      this.space = this.$refs.content.children[1].getBoundingClientRect().x - this.$refs.content.children[0].getBoundingClientRect().x - this.nodeWidth
+      this.getContentWidth()
+      
+    },
+    watch: {
+      list(val,oldVal) {
+        this.$refs.content.style.width = '10000px'
+        this.$nextTick(() => {
+          this.contentWidth += this.getNodeLength(this.$refs.content.children[this.$refs.content.children.length-1])
+          this.$refs.content.style.width = (this.contentWidth - this.marginLeft) + 'px'
+        })
+      },
+      currentIndex(val,oldVal) {
+        this.$refs.active_border.style.width = this.itemsWidth[val] + 'px'
+        for(let i = 0; i < val; i++) {
+          this.offsetX += this.itemsWidth[i]
+        }
+        this.$refs.active_border.style.transform = `translateX(${val * (this.marginLeft + this.marginRight) + this.offsetX}px)`
+        this.$refs.active_border.style.transition = '.3s'
+        this.offsetX = 0
+      }
     }
   }
 </script>
@@ -56,36 +93,36 @@
 <style lang="stylus" scoped>
   .top-scroll-recom {
     width: 100vw;
-    height: 50px;
+    height: 40px;
     box-sizing border-box
-    padding 10px 15px 0
+    padding 5px 15px 0
     display flex
-    border-bottom 1px solid #f5f5f547
+    border-bottom 1px solid rgba(245, 245, 245, 0.7)
     color #292828
   }
   .scroll {
     width: calc(100% - 30px);
-    overflow auto
+    overflow-y hidden
+    overflow-x auto
   }
   .scroll::-webkit-scrollbar{
     width: 0 !important
     display:none;
   }
   .scroll .content {
-    width 600px
-    height: 100%;
+    width 1000px
+    height: (100% - 5px);
     display flex
-    justify-content space-between
+    align-items center
     padding-top 5px
     box-sizing border-box
     font-size 16px
-    position relative
     .recom-item {
-    
+      margin 0 22px
+      text-align center
     }
     .active {
       color #e61818
-      font-weight bold
     }
     .border {
       width: 600px;
@@ -98,6 +135,19 @@
         background-color #e61818
       }
     }
+  }
+  .border {
+    width: 600px;
+    height: 5px;
+    bottom 0
+    .active-border {
+      width: 32px;
+      height: 3px;
+      background-color #e61818
+    }
+  }
+  .scroll .content .recom-item:first-child {
+    margin-left 0
   }
   .recom-icon {
     width: 30px;

@@ -72,7 +72,7 @@
 
 <style lang="stylus" scoped>
   .play-recommend {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 90px);
   }
   .van-loading {
     display flex

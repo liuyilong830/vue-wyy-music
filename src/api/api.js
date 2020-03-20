@@ -27,8 +27,9 @@ export const newDish = (limit = 6) => get(find.newDish, {limit, timestamp: new D
 export const getTopList = (idx) => get(find.topList, {idx, timestamp: new Date().getTime()})
 export const getDjprogram = () => get(find.djprogram, {timestamp: new Date().getTime()})
 
-export const topPlayList = (limit = 33) => get(playList.topPlayList, {limit, timestamp: new Date().getTime()})
+export const topPlayList = (limit = 33, cat = '全部') => get(playList.topPlayList, {cat, limit, timestamp: new Date().getTime()})
 export const getLabels = () => get(playList.labels, {timestamp: new Date().getTime()})
+export const getPlayList = (limit = 30, cat = '全部') => get(playList.getPlayList, {cat, limit, timestamp: new Date().getTime()})
 
 export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getTime()})
 export const songDetail = (ids) => get(daily.songDetail,{ id: ids.join() , timestamp: new Date().getTime() })

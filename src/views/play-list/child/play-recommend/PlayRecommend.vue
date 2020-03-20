@@ -11,7 +11,7 @@
 <script>
   import Swiper3D from './child/Swiper3D'
   import PlayScroll from "components/common/betterscroll/BScroll";
-  import PlayListItem from './child/PlayListItem'
+  import PlayListItem from '../PlayListItem'
   
   // ui 框架
   import { Loading } from 'vant';

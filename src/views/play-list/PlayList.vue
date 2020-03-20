@@ -15,7 +15,7 @@
       <div class="swipe-wrapper">
         <div class="swipe" ref="swipe" @touchstart="ontouchstart" @touchmove="ontouchmove" @touchend="ontouchend">
           <div class="swipe-item" v-for="(item,index) in myLabels" :key="index">
-            <all-play-list @changeimg="changeimg" @setActiveImg="setActiveImg" :item="item" />
+            <all-play-list @changeimg="changeimg" @setActiveImg="setActiveImg" :currentIndex="currentIndex" :index="index" :item="item" />
           </div>
         </div>
       </div>
@@ -29,9 +29,6 @@
   import NavBar from 'components/common/navbar/NavBar'
   import TopScrollRecom from 'components/common/topx-scroll-recommend/TopScrollRecom'
   import SongLabel from './child/SongLabel'
-  import PlayRecommend from './child/play-recommend/PlayRecommend'
-  import PlayOfficial from './child/play-official/PlayOfficial'
-  import PlayElectron from './child/play-electron/PlayElectron'
   import AllPlayList from './AllPlayList'
   export default {
     name: 'PlayList',
@@ -39,9 +36,6 @@
       NavBar,
       TopScrollRecom,
       SongLabel,
-      PlayRecommend,
-      PlayOfficial,
-      PlayElectron,
       AllPlayList
     },
     data() {
@@ -53,12 +47,12 @@
         isShow: false,
         myLabels: [
           {name: '推荐', hot: false},
-          {name: '官方', hot: false},/*
+          {name: '官方', hot: false},
           {name: '精品', hot: false},
           {name: '华语', hot: true},
           {name: '说唱', hot: false},
           {name: '流行', hot: true},
-          {name: '民谣', hot: true},*/
+          {name: '民谣', hot: true},
           {name: '电子', hot: true}
         ],
         startX: 0,
@@ -67,46 +61,77 @@
         transX: 0,
         currentIndex: 0,
         touchW: 100,
-        viewWidth: 0
+        viewWidth: 0,
+        startY: 0,
+        endY: 0,
+        offsetY: 0,
+        swipeX: true,
+        swipeY: true
       }
     },
     methods: {
+      // 返回操作
       confirmBack() {
         this.$router.back()
       },
+      // 设置背景图片，根据轮播图的滚动而展示背景图片
       setStyleBg() {
         this.style = document.createElement("style")
         document.head.appendChild(this.style)
         this.sheet = this.style.sheet
-        this.sheet.insertRule(`.play-list::before { background: url(${this.activeBgUrl}) -136px 0px/ 100vh }`, 0)
+        this.sheet.insertRule(`.play-list::before { background: url(${this.activeBgUrl}) -136px 0px/ 100vh; transition: 1s; }`, 0)
       },
       // 切换图片后，展示不同图片
       changeimg(obj) {
         document.head.removeChild(this.style)
         this.style = null
         this.sheet = null
+        this.bgUrl = obj.bgUrl
         this.activeBgUrl = obj.bgUrl
       },
+      // 初次渲染的时候，展示中间一张图片作为背景
       setActiveImg(img) {
         this.activeBgUrl = img
       },
-      // 展示所有的歌单分类
+      // 展示所有的歌单分类标签
       showAllRecommend() {
         this.isShow = true
       },
+      // 移动整个模块进行左右静态轮播图的切换
       ontouchstart(event) {
         this.startX = event.touches[0].pageX || event.touches[0].clientX
+        this.startY =event.touches[0].pageY || event.touches[0].clientY
         this.$refs.swipe.style.transition = '0s'
+        this.offsetY = this.offsetX = 0
+        this.swipeY = this.swipeX = true
       },
+      // 移动过程中，根据偏移量，去移动具体的宽度
       ontouchmove(event) {
         this.endX = event.touches[0].pageX || event.touches[0].clientX
+        this.endY = event.touches[0].pageY || event.touches[0].clientY
+        // 在前10px里判断是进行横向滑动还是上下滚动，如果是上下滚动，则将横向滑动的条件设置为 false，反之则将上下滚动的条件设置为 false
+        if(this.swipeX && Math.abs(this.offsetX) - Math.abs(this.offsetY) > 10) {
+          this.swipeY = false
+          this.offsetY = 10000
+        } else if(this.swipeY && Math.abs(this.offsetY) - Math.abs(this.offsetX) > 10) {
+          this.swipeX = false
+          this.offsetY = 10000
+          return
+        }
         // 如果是向左滑动，则 offsetX 值为正，反之则为负
         this.offsetX = this.startX - this.endX
-        if((this.currentIndex <= 0 && this.offsetX <= 0) || (this.currentIndex >= this.$refs.swipe.children.length-1 && this.offsetX > 0)) return
-        this.translateX(this.transX - this.offsetX)
+        this.offsetY = this.startY - this.endY
+        if(Math.abs(this.offsetX) < 10) return
+        if((this.currentIndex <= 0 && this.offsetX <= 0) || (this.currentIndex >= this.myLabels.length-1 && this.offsetX > 0)) return
+        if(this.offsetX > 0) {
+          this.translateX(this.transX - this.offsetX + 10)
+        } else {
+          this.translateX(this.transX - this.offsetX - 10)
+        }
       },
+      // 移动结束之后，根据是否超过确认滑动的距离来判断是继续显示当前页还是展示其他的页
       ontouchend() {
-        if((this.currentIndex <= 0 && this.offsetX <= 0) || (this.currentIndex >= this.$refs.swipe.children.length-1 && this.offsetX > 0)) return
+        if((this.currentIndex <= 0 && this.offsetX <= 0) || (this.currentIndex >= this.myLabels.length-1 && this.offsetX > 0)) return
         if(Math.abs(this.offsetX) >= this.touchW) {
           // 往左划动
           if(this.offsetX >= 0) {
@@ -120,26 +145,39 @@
         this.translateX(this.transX)
         this.$refs.swipe.style.transition = '.3s'
       },
+      // 设置滚动的距离的方法
       translateX(offset) {
         this.$refs.swipe.style.transform = `translateX(${offset}px)`
       },
+      // 当除了滑动外，点击上方的滚动标签，切换至对应的页面
       setCurrentIndex(index) {
         this.currentIndex = index
       }
     },
     watch: {
+      // 监听当前背景图片是否发生了改变，如果改变了，则需要重新设置背景图片
       activeBgUrl(val,oldVal) {
+        if(this.style) {
+          document.head.removeChild(this.style)
+          this.style = null
+          this.sheet = null
+        }
         this.setStyleBg()
       },
+      // 监听索引值是否改变，如果改变，则切换至对应的页面
       currentIndex(val,oldVal) {
+        if(val === 0) {
+          this.activeBgUrl = this.bgUrl
+        }
         this.transX = -this.viewWidth*(this.currentIndex)
         this.translateX(this.transX)
         this.$refs.swipe.style.transition = '.3s'
       }
     },
     mounted() {
+      // 初次渲染的时候，保存当前页面的视口宽度，用于计算可滚动的区域的长度
       this.viewWidth =  window.innerWidth
-      this.$refs.swipe.style.width = this.viewWidth * this.$refs.swipe.children.length + 'px'
+      this.$refs.swipe.style.width = this.viewWidth * this.myLabels.length + 'px'
     }
   }
 </script>

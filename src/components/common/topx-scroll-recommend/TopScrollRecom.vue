@@ -58,7 +58,7 @@
         let marginRight = window.getComputedStyle(this.$refs.content.children[1]).marginRight
         this.marginLeft = Number(marginLeft.substring(0,marginLeft.length-2))
         this.marginRight = Number(marginRight.substring(0,marginRight.length-2))
-        for(let i = 0; i < this.$refs.content.children.length; i++) {
+        for(let i = 0; i < this.list.length; i++) {
           this.contentWidth += this.getNodeLength(this.$refs.content.children[i])
         }
         this.$refs.content.style.width = this.$refs.border.style.width = (this.contentWidth - this.marginLeft) + 'px'
@@ -73,8 +73,20 @@
       list(val,oldVal) {
         this.$refs.content.style.width = '10000px'
         this.$nextTick(() => {
-          this.contentWidth += this.getNodeLength(this.$refs.content.children[this.$refs.content.children.length-1])
-          this.$refs.content.style.width = (this.contentWidth - this.marginLeft) + 'px'
+          /*this.contentWidth = 0
+          this.itemsWidth = []*/
+          if(val.length > oldVal.length) {
+            this.contentWidth += this.getNodeLength(this.$refs.content.children[this.$refs.content.children.length-1])
+          } else {
+            let index = 0
+            for(let key in val) {
+              if(val[key].name !== oldVal[key].name) return index = key
+            }
+            this.contentWidth -= (this.itemsWidth[index] + this.marginRight + this.marginLeft)
+            this.itemsWidth.splice(index, 1)
+          }
+          this.$refs.content.style.width = this.$refs.border.style.width = (this.contentWidth - this.marginLeft) + 'px'
+          // this.getContentWidth()
         })
       },
       currentIndex(val,oldVal) {

@@ -1,26 +1,26 @@
 ﻿<template>
-  <div class="play-official">
-    <play-official-scroll :bounce="false" class="play-official-scroll" :pullUpLoad="true" @pullingUp="pullingUp" ref="playScroll">
+  <div class="play-popular">
+    <play-popular-scroll :bounce="false" class="play-popular-scroll" :pullUpLoad="true" @pullingUp="pullingUp" ref="playScroll">
       <play-list-item :listItem="list" v-if="list.length !== 0"></play-list-item>
       <van-loading type="spinner" v-show="load" size="20px" color="red"></van-loading>
-    </play-official-scroll>
+    </play-popular-scroll>
   </div>
 </template>
 
 <script>
-  import PlayOfficialScroll from "components/common/betterscroll/BScroll";
+  import PlayPopularScroll from "components/common/betterscroll/BScroll";
   import {mixin} from "@/utils/mixin";
   export default {
-    name: 'PlayOfficial',
+    name: 'PlayPopular',
     components: {
-      PlayOfficialScroll
+      PlayPopularScroll
     },
     data() {
       return {
-        list: [],
-        count: 30,
         load: false,
-        cat: '官方'
+        count: 30,
+        list: [],
+        cat: '流行'
       }
     },
     props: {
@@ -38,12 +38,12 @@
 </script>
 
 <style lang="stylus" scoped>
-  .play-official {
+  .play-popular {
     width: 100vw;
     height: calc(100vh - 90px);
   }
-  .play-official-scroll {
-    height 100%
+  .play-popular-scroll {
+    height: 100%;
     .play-list-item {
       padding-top 15px
     }

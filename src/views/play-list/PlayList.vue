@@ -15,12 +15,19 @@
       <div class="swipe-wrapper">
         <div class="swipe" ref="swipe" @touchstart="ontouchstart" @touchmove="ontouchmove" @touchend="ontouchend">
           <div class="swipe-item" v-for="(item,index) in myLabels" :key="index">
-            <all-play-list @changeimg="changeimg" @setActiveImg="setActiveImg" :currentIndex="currentIndex" :index="index" :item="item" />
+            <all-play-list
+              @changeimg="changeimg"
+              @setActiveImg="setActiveImg"
+              @openToSongList="openToSongList"
+              :currentIndex="currentIndex"
+              :index="index"
+              :item="item" />
           </div>
         </div>
       </div>
       
       <song-label v-model="isShow" :list="myLabels"></song-label>
+      <play-list-songs v-model="showSongsList" :songDet="songDet"></play-list-songs>
     </div>
   </div>
 </template>
@@ -30,13 +37,15 @@
   import TopScrollRecom from 'components/common/topx-scroll-recommend/TopScrollRecom'
   import SongLabel from './child/SongLabel'
   import AllPlayList from './AllPlayList'
+  import PlayListSongs from './PlayListSongs'
   export default {
     name: 'PlayList',
     components: {
       NavBar,
       TopScrollRecom,
       SongLabel,
-      AllPlayList
+      AllPlayList,
+      PlayListSongs
     },
     data() {
       return {
@@ -66,7 +75,9 @@
         endY: 0,
         offsetY: 0,
         swipeX: true,
-        swipeY: true
+        swipeY: true,
+        showSongsList: false,
+        songDet: {}
       }
     },
     methods: {
@@ -83,15 +94,17 @@
       },
       // 切换图片后，展示不同图片
       changeimg(obj) {
+        if(obj.bgUrl == this.bgUrl) return
         document.head.removeChild(this.style)
         this.style = null
         this.sheet = null
-        this.bgUrl = obj.bgUrl
-        this.activeBgUrl = obj.bgUrl
+        // obj.bgUrl 中保存的是3d轮播图中的图片url，如果是通过切换标签展示的数据的时候，是只有 coverImgUrl 的，他们并不需要改变bgUrl
+        if(obj.bgUrl) this.bgUrl = obj.bgUrl
+        this.activeBgUrl = obj.bgUrl || obj.coverImgUrl
       },
       // 初次渲染的时候，展示中间一张图片作为背景
       setActiveImg(img) {
-        this.activeBgUrl = img
+        this.activeBgUrl = this.bgUrl = img
       },
       // 展示所有的歌单分类标签
       showAllRecommend() {
@@ -152,6 +165,10 @@
       // 当除了滑动外，点击上方的滚动标签，切换至对应的页面
       setCurrentIndex(index) {
         this.currentIndex = index
+      },
+      openToSongList(obj) {
+        this.songDet = Object.assign({}, obj)
+        this.showSongsList = true
       }
     },
     watch: {
@@ -166,6 +183,7 @@
       },
       // 监听索引值是否改变，如果改变，则切换至对应的页面
       currentIndex(val,oldVal) {
+        // 如果是从其他页面返回到推荐标签页面，那么需要将推荐页面中的轮播图中间的图片url传给 activeBgUrl来达到变换背景的效果
         if(val === 0) {
           this.activeBgUrl = this.bgUrl
         }

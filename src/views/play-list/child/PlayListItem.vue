@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="play-list-item">
-    <song-item v-for="(item,index) in listItem" :key="index" class="song-item">
+    <song-item v-for="(item,index) in listItem" :key="index" class="song-item" @click.native="openToSongList(item)">
       <template v-slot:count>
         <span>{{item.playcount || item.playCount | playCountFilter}}</span>
       </template>
@@ -45,6 +45,11 @@
         return value
       }
     },
+    methods: {
+      openToSongList(item) {
+        this.$emit('openToSongList', item)
+      }
+    }
   }
 </script>
 

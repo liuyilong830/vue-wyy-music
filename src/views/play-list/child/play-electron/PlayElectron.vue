@@ -1,7 +1,7 @@
 ﻿<template>
   <div class="play-electron">
     <play-electron-scroll :bounce="false" class="play-electron-scroll" :pullUpLoad="true" @pullingUp="pullingUp" ref="playScroll">
-      <play-list-item :listItem="list" v-if="list.length !== 0"></play-list-item>
+      <play-list-item :listItem="list" v-if="list.length !== 0" v-on="$listeners" ref="contain"></play-list-item>
       <van-loading type="spinner" v-show="load" size="20px" color="red"></van-loading>
     </play-electron-scroll>
   </div>
@@ -48,6 +48,7 @@
       }
       .van-loading {
         display flex
+        margin-top 30px
         justify-content center
       }
     }

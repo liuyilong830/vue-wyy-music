@@ -51,4 +51,7 @@
   .center span {
     font-size 20px
   }
+  .right {
+    text-align center
+  }
 </style>

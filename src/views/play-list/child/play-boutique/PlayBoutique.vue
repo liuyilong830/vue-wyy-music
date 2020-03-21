@@ -7,7 +7,7 @@
           <span>筛选</span>
         </p>
       </div>
-      <play-list-item :listItem="list" v-if="list.length !== 0"></play-list-item>
+      <play-list-item :listItem="list" v-if="list.length !== 0" v-on="$listeners" ref="contain"></play-list-item>
       <van-loading type="spinner" v-show="load" size="20px" color="red"></van-loading>
     </play-boutique-scroll>
   </div>
@@ -15,17 +15,11 @@
 
 <script>
   import PlayBoutiqueScroll from "components/common/betterscroll/BScroll";
-  import PlayListItem from '../PlayListItem'
-  
-  import {getPlayList} from 'api/api.js'
-
-  import { Loading } from 'vant';
+  import {mixin} from "@/utils/mixin";
   export default {
     name: 'PlayBoutique',
     components: {
-      PlayBoutiqueScroll,
-      PlayListItem,
-      VanLoading: Loading
+      PlayBoutiqueScroll
     },
     data() {
       return {
@@ -46,42 +40,7 @@
         default: 0
       }
     },
-    methods: {
-      asyncGetPlayList(num) {
-        this.load = true
-        getPlayList(num, this.cat).then(res => {
-          if(res.code === 200) {
-            if(this.list.length == 0) {
-              this.obj.coverImgUrl = res.playlists[0].coverImgUrl
-              this.$emit('setActiveImg', this.obj.coverImgUrl)
-            }
-            this.list.push(...res.playlists.filter((item,index) => index >= this.list.length))
-            this.$refs.playScroll.finishPullUp()
-            this.$refs.playScroll.scroll.refresh()
-            this.count = this.list.length
-            this.load = false
-          }
-        })
-      },
-      pullingUp(scroll) {
-        this.asyncGetPlayList(this.count + 30)
-      }
-    },
-    mounted() {
-      if(this.currentIndex === this.index && this.list.length == 0) {
-        this.asyncGetPlayList(this.count)
-      }
-    },
-    watch: {
-      currentIndex(val,oldVal) {
-        if(val === this.index && this.list.length == 0) {
-          // 调用混入中的方法
-          this.asyncGetPlayList(this.count)
-        } else if(val === this.index) {
-          this.$emit('setActiveImg', this.obj.coverImgUrl)
-        }
-      }
-    }
+    mixins: [mixin]
   }
 </script>
 
@@ -117,6 +76,7 @@
   }
   .van-loading {
     display flex
+    margin-top 30px
     justify-content center
   }
 </style>

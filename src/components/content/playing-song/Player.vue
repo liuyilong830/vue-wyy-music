@@ -2,7 +2,7 @@
   <div class="player" @click.capture="captureClick">
     <playing-song class="playing-song" v-if="getShowSong.length !== 0">
       <template v-slot:Album>
-        <img :src="getShowSong[0].album.blurPicUrl" @click="openPlayer" alt="">
+        <img :src="getImgUrl" @click="openPlayer" alt="">
       </template>
       <template v-slot:songName>
         {{getShowSong[0].name}}
@@ -36,7 +36,17 @@
       }
     },
     computed: {
-      ...mapGetters(['getPlayingSong','getSongObj','getSongsDetail','getSongFlag','getShowSong','getCurrentIndex'])
+      ...mapGetters(['getPlayingSong','getSongObj','getSongsDetail','getSongFlag','getShowSong','getCurrentIndex']),
+      // 获取背景图片
+      getImgUrl() {
+        if(this.getShowSong[0].album) {
+          return this.getShowSong[0].album.blurPicUrl
+        } else if(this.getShowSong[0].al) {
+          return this.getShowSong[0].al.picUrl
+        } else {
+          return ''
+        }
+      }
     },
     watch: {
       // 监听到 getSongDetail对象中发生变化的时候，播放对应的音乐

@@ -1,6 +1,7 @@
 ﻿import {getPlayList,topPlayList} from 'api/api.js'
 import PlayListItem from "../views/play-list/child/PlayListItem";
 import {Loading, Toast} from "vant";
+import {mapGetters} from 'vuex'
 export const mixin = {
   components: {
     PlayListItem,
@@ -26,8 +27,8 @@ export const mixin = {
               return Toast('没有找到该标签的api接口，所以暂无数据')
             }
             this.obj.coverImgUrl = res.playlists[0].coverImgUrl
-            // this.$emit('changeimg',this.obj)
-            this.$emit('setActiveImg', this.obj.coverImgUrl)
+            this.$emit('changeimg',this.obj)
+            // this.$emit('setActiveImg', this.obj.coverImgUrl)
           }
           this.list.push(...res.playlists.filter((item,index) => index >= this.list.length))
           this.$refs.playScroll.finishPullUp()
@@ -53,8 +54,8 @@ export const mixin = {
         // 调用混入中的方法
         return this.asyncGetPlayList(this.count)
       } else if(val === this.index) {
-        console.log(111)
-        this.$emit('setActiveImg', this.obj.coverImgUrl)
+        this.$emit('changeimg', this.obj)
+        // this.$emit('setActiveImg', this.obj.coverImgUrl)
       }
     }
   }

@@ -30,6 +30,7 @@ export const getDjprogram = () => get(find.djprogram, {timestamp: new Date().get
 export const topPlayList = (limit = 33, cat = '全部') => get(playList.topPlayList, {cat, limit, timestamp: new Date().getTime()})
 export const getLabels = () => get(playList.labels, {timestamp: new Date().getTime()})
 export const getPlayList = (limit = 30, cat = '全部') => get(playList.getPlayList, {cat, limit, timestamp: new Date().getTime()})
+export const getPlayListDetail = (id) => get(playList.listdetail, {id, timestamp: new Date().getTime()})
 
 export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getTime()})
 export const songDetail = (ids) => get(daily.songDetail,{ id: ids.join() , timestamp: new Date().getTime() })

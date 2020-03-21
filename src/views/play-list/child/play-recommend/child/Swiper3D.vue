@@ -1,7 +1,7 @@
 ﻿<template>
   <div>
-    <div class="swiper-3d" @touchstart.stop="ontouchstart" @touchmove.stop="ontouchmove" @touchend.stop="ontouchend" ref="swiper_3d">
-      <div class="block" v-for="(item,index) in topThree" :key="index">
+    <div class="swiper-3d" @touchstart="ontouchstart" @touchmove.stop="ontouchmove" @touchend="ontouchend" ref="swiper_3d">
+      <div class="block" v-for="(item,index) in topThree" :key="index" @click="openToSongList(item)" >
         <div class="img">
           <img :src="item.coverImgUrl" alt="">
         </div>
@@ -42,6 +42,7 @@
     methods: {
       // 手机触碰屏幕开始
       ontouchstart(event) {
+        this.startX = this.endX = this.offsetX = 0
         this.startX = event.touches[0].pageX || event.touches[0].clientX
         for(let key in this.items) {
           this.items[key].node.style.opacity = 0.5
@@ -54,12 +55,12 @@
         this.offsetX = this.startX - this.endX
       },
       // 移动结束之后触发
-      ontouchend() {
-        if(this.offsetX >= 0) {
+      ontouchend(event) {
+        if(this.offsetX > 0) {
           for(let key in this.items) {
             this.changeIndex(this.items[key],true)
           }
-        } else {
+        } else if(this.offsetX < 0) {
           for(let key in this.items) {
             this.changeIndex(this.items[key],false)
           }
@@ -122,6 +123,11 @@
           this.transArr.push(arr)
           this.leftArr.push(Number(str.substring(0,str.length-2)))
         }
+      },
+      // 打开对应的歌曲列表页面
+      openToSongList(item) {
+        if(item.coverImgUrl !== Object.values(this.items).find(val => val.index == 0).bgUrl) return
+        this.$emit('openToSongList', item)
       }
     },
     mounted() {

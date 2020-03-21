@@ -1,7 +1,7 @@
 ﻿<template>
   <div class="play-chinese">
     <play-chinese-scroll :bounce="false" class="play-chinese-scroll" :pullUpLoad="true" @pullingUp="pullingUp" ref="playScroll">
-      <play-list-item :listItem="list" v-if="list.length !== 0"></play-list-item>
+      <play-list-item :listItem="list" v-if="list.length !== 0" v-on="$listeners" ref="contain"></play-list-item>
       <van-loading type="spinner" v-show="load" size="20px" color="red"></van-loading>
     </play-chinese-scroll>
   </div>
@@ -9,7 +9,7 @@
 
 <script>
   import PlayChineseScroll from "components/common/betterscroll/BScroll"
-  import {mixin} from "../../../../utils/mixin";
+  import {mixin} from "@/utils/mixin";
   export default {
     name: 'PlayChinese',
     components: {
@@ -49,6 +49,7 @@
     }
     .van-loading {
       display flex
+      margin-top 30px
       justify-content center
     }
   }

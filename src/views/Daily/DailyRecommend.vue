@@ -114,7 +114,6 @@
         songObj: {},
         showBottomBar: false,
         showMusic: false,
-        routerViewShow: false,
         realSongDet: []
       }
     },
@@ -137,7 +136,6 @@
       },
       // 播放点击的音乐
       playerClick(id,index,item) {
-        this.routerViewShow = true
         // 因为按照顺序join到数据库中查询详情页数据，但是返回的数据却不是按顺序的，所以我们只能通过find去查找
         this.songObj = this.songDet.find(item => item.id == id)
         // 默认随便点击一首都是将整个列表都加入到播放列表中

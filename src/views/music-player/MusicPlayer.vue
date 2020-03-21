@@ -1,5 +1,5 @@
 <template>
-  <div class="musicPlayer" v-if="getPlayingSong.length !== 0" ref="musicPlayer">
+  <div class="musicPlayer" v-if="getShowSong.length !== 0" ref="musicPlayer">
     <div class="music-contain">
       <nav-bar @confirmBack='confirmBack' class="nav-bar">
         <template v-slot:left>
@@ -8,7 +8,7 @@
         <template v-slot:center>
           <div class="flex">
             <span class="title">{{getShowSong[0].name}}</span>
-            <p class="artists">{{getShowSong[0].artists[0].name}} ></p>
+            <p class="artists">{{getArtists}} ></p>
           </div>
         </template>
         <template v-slot:right>
@@ -20,7 +20,7 @@
           <div class="albumImg">
             <div class="mask">
               <div class="circular" ref="circular" :class="cdClass">
-                <img :src="getShowSong[0].album.blurPicUrl" alt="">
+                <img :src="getImgUrl" alt="">
               </div>
             </div>
           </div>
@@ -39,7 +39,7 @@
             <span>{{currentTime | getPlayTime}}</span>
           </template>
           <template v-slot:stopTime>
-            <span>{{getShowSong[0].bMusic.playTime | getPlayTime}}</span>
+            <span>{{getMusicTime | getPlayTime}}</span>
           </template>
         </progress-bar>
         <operation-song class="operation-song">
@@ -75,6 +75,7 @@
   import Lyric from './child/Lyric'
   import {mapGetters} from 'vuex'
   import {getLyric} from 'api/api.js'
+  import Toast from 'vant'
   export default {
     name: 'MusicPlayer',
     components: {
@@ -116,6 +117,32 @@
       // 旋转cd和歌词的显示和隐藏
       getShowLyric() {
         return this.isShowLyric? 'hidden' : 'visible'
+      },
+      // 获取背景图片
+      getImgUrl() {
+        if(this.getShowSong[0].album) {
+          return this.getShowSong[0].album.blurPicUrl
+        } else if(this.getShowSong[0].al) {
+          return this.getShowSong[0].al.picUrl
+        } else {
+          return ''
+        }
+      },
+      // 获取作者和歌曲的展示信息
+      getArtists() {
+        if(this.getShowSong[0].artists) {
+          return getShowSong[0].artists[0].name
+        } else if(this.getShowSong[0].ar) {
+          return this.getShowSong[0].ar[0].name
+        }
+      },
+      // 获取本歌曲的时长
+      getMusicTime() {
+        if(this.getShowSong[0].bMusic) {
+          return getShowSong[0].bMusic.playTime
+        } else if(this.getShowSong[0].dt) {
+          return this.getShowSong[0].dt
+        }
       }
     },
     filters: {
@@ -169,14 +196,14 @@
       // 点击进度条改变时间，注意：audio的currentIndex是可读可写的
       changeTime(currentW) {
         this.changeLyric = true
-        var time = currentW * (this.getShowSong[0].bMusic.playTime / 1000) / this.allWidth
+        var time = currentW * (this.getMusicTime / 1000) / this.allWidth
         this.$bus.$emit('changeTime',time)
       },
       // 拖动进度条操作
       touchTime(length) {
         // 当用户拖动的时候，设置状态为false，这里设置状态的原因是为了当拖拽事件结束之后，可以监听状态的改变从而重新通过事件总线发起监听
         this.flag = false
-        this.time = length * (this.getShowSong[0].bMusic.playTime / 1000) / this.allWidth
+        this.time = length * (this.getMusicTime / 1000) / this.allWidth
         // 在拖动的过程中要先关闭该事件总线，不然会存在一来一回的情况
         this.$bus.$off('timeUpdate')
       },
@@ -206,7 +233,7 @@
         this.style = document.createElement("style")
         document.head.appendChild(this.style)
         this.sheet = this.style.sheet
-        this.bgUrl = this.getShowSong[0].album.blurPicUrl
+        this.bgUrl = this.getImgUrl
         this.sheet.insertRule(`.musicPlayer::before { background: url(${this.bgUrl}) -136px 0px/ 100vh }`, 0)
       },
       // 页面加载完成的时候获取当前播放的相关信息
@@ -226,7 +253,6 @@
       }
     },
     mounted() {
-      console.log(111)
       this.setStyleBg()
       this.onTimeUpdate()
       this.setInitSongFlag()
@@ -251,8 +277,8 @@
       },
       // 监听时间变化，时间一边就计算进度条当前位置的长度
       time(val,oldVal) {
-        this.currentLength = val * this.allWidth / (this.getShowSong[0].bMusic.playTime / 1000)
-        if(val == parseInt((this.getShowSong[0].bMusic.playTime / 1000))) {
+        this.currentLength = val * this.allWidth / (this.getMusicTime / 1000)
+        if(val == parseInt(this.getMusicTime / 1000)) {
           // 控制播放按钮和暂停按钮的显示
           this.start = false
           this.$store.commit('setSongFlag',{btnFlag: this.start})

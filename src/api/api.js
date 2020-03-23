@@ -36,3 +36,4 @@ export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getT
 export const songDetail = (ids) => get(daily.songDetail,{ id: ids.join() , timestamp: new Date().getTime() })
 
 export const getLyric = (id) => get(song.lyric, {id, timestamp: new Date().getTime() })
+export const getComment = (id,limit = 40) => get(song.comment, {id, limit, timestamp: new Date().getTime() })

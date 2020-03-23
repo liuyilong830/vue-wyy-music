@@ -1,5 +1,5 @@
 <template>
-  <div class="musicPlayer" v-if="getShowSong.length !== 0" ref="musicPlayer">
+  <div class="musicPlayer" ref="musicPlayer">
     <div class="music-contain">
       <nav-bar @confirmBack='confirmBack' class="nav-bar">
         <template v-slot:left>
@@ -24,7 +24,7 @@
               </div>
             </div>
           </div>
-          <operation></operation>
+          <operation @openComment="openComment"></operation>
         </div>
         <lyric :lyric='lyric' :flag1='flag' ref="lyric" v-model='isShowLyric' v-bind:changeLyric.sync='changeLyric'></lyric>
       </div>
@@ -64,6 +64,10 @@
         </operation-song>
       </div>
     </div>
+  
+    <transition name="list">
+      <comment v-model="showComment" v-if="showComment" :commentsObj="commentsObj"></comment>
+    </transition>
   </div>
 </template>
 
@@ -73,9 +77,9 @@
   import ProgressBar from './child/ProgressBar'
   import OperationSong from './child/OperationSong'
   import Lyric from './child/Lyric'
+  import Comment from './child/Comment'
   import {mapGetters} from 'vuex'
-  import {getLyric} from 'api/api.js'
-  import Toast from 'vant'
+  import {getLyric,getComment} from 'api/api.js'
   export default {
     name: 'MusicPlayer',
     components: {
@@ -83,7 +87,8 @@
       Operation,
       ProgressBar,
       OperationSong,
-      Lyric
+      Lyric,
+      Comment
     },
     data() {
       return {
@@ -98,7 +103,9 @@
         move: 1,  // 1表示列表循环，2表示单曲循环，3表示随机播放
         isShowLyric: false, // 是否显示歌词
         lyric: {},
-        changeLyric: false
+        changeLyric: false,
+        showComment: false,
+        commentsObj: {}
       }
     },
     model: {
@@ -131,7 +138,7 @@
       // 获取作者和歌曲的展示信息
       getArtists() {
         if(this.getShowSong[0].artists) {
-          return getShowSong[0].artists[0].name
+          return this.getShowSong[0].artists[0].name
         } else if(this.getShowSong[0].ar) {
           return this.getShowSong[0].ar[0].name
         }
@@ -139,7 +146,7 @@
       // 获取本歌曲的时长
       getMusicTime() {
         if(this.getShowSong[0].bMusic) {
-          return getShowSong[0].bMusic.playTime
+          return this.getShowSong[0].bMusic.playTime
         } else if(this.getShowSong[0].dt) {
           return this.getShowSong[0].dt
         }
@@ -236,6 +243,10 @@
         this.bgUrl = this.getImgUrl
         this.sheet.insertRule(`.musicPlayer::before { background: url(${this.bgUrl}) -136px 0px/ 100vh }`, 0)
       },
+      removeStyleBg() {
+        document.head.removeChild(this.style)
+        this.style = this.sheet = null
+      },
       // 页面加载完成的时候获取当前播放的相关信息
       setInitSongFlag() {
         this.move = this.getSongFlag.move
@@ -248,6 +259,15 @@
         getLyric(this.getSongObj.id).then(res => {
           if(res.code == 200) {
             this.lyric = res.lrc
+          }
+        })
+      },
+      // 打开歌曲评论页面
+      openComment() {
+        getComment(this.getSongObj.id,50).then(res => {
+          if(res.code === 200) {
+            this.commentsObj = Object.assign({}, res)
+            this.showComment = true
           }
         })
       }
@@ -270,6 +290,7 @@
        * 这里的监听是监听歌曲播放完之后自动切换到下一首的时候会触发，前提是没有关闭播放器页面
        */
       getSongObj() {
+        this.removeStyleBg()
         this.setStyleBg()
         this.getSongLyric()
         this.start = true
@@ -404,5 +425,12 @@
     padding-top 70px */
     overflow hidden
     position relative
+  }
+  .list-enter, .list-leave-to {
+    opacity: 0;
+    transform: translate(0,60px);
+  }
+  .list-enter-active, .list-leave-active {
+    transition: all .2s;
   }
 </style>

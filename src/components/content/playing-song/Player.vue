@@ -50,7 +50,10 @@
     },
     watch: {
       // 监听到 getSongDetail对象中发生变化的时候，播放对应的音乐
-      getSongObj() {
+      getSongObj(val) {
+        if(!val.url) {
+          return this.next()
+        }
         // 这里不能直接调用play方法，因为此时audio还在加载元数据，如果在加载过程中调用，会中断加载，所以我采用了等他元数据加载完后触发的事件
         this.$refs.audio.addEventListener('loadedmetadata', () => {
           this.index = this.getCurrentIndex

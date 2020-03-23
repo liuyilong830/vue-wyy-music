@@ -16,6 +16,9 @@ export const mixin = {
       obj: {coverImgUrl: ''}
     }
   },
+  computed: {
+    ...mapGetters(['getSongObj'])
+  },
   methods: {
     asyncGetPlayList(num) {
       this.load = true
@@ -57,6 +60,9 @@ export const mixin = {
         this.$emit('changeimg', this.obj)
         // this.$emit('setActiveImg', this.obj.coverImgUrl)
       }
+    },
+    getSongObj() {
+      this.$refs.contain.style.paddingBottom = '45px'
     }
   }
 }

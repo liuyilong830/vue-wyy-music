@@ -10,7 +10,7 @@
     <div class="icon-item">
       <span class="iconfont icon-vip"></span>
     </div>
-    <div class="icon-item">
+    <div class="icon-item" @click.stop="openComment">
       <span class="iconfont icon-pinglun"></span>
     </div>
     <div class="icon-item">
@@ -30,6 +30,9 @@
     methods: {
       likeSongClick() {
         this.likeFlag = !this.likeFlag
+      },
+      openComment() {
+        this.$emit('openComment')
       }
     }
   }

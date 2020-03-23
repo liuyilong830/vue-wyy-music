@@ -27,7 +27,7 @@
       </div>
       
       <song-label v-model="isShow" :list="myLabels"></song-label>
-      <play-list-songs v-model="showSongsList" :songDet="songDet"></play-list-songs>
+      <play-list-songs v-model="showSongsList" v-if="showSongsList" :songDet="songDet"></play-list-songs>
     </div>
   </div>
 </template>

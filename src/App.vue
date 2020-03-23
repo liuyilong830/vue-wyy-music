@@ -27,14 +27,15 @@
       }
     },
     computed: {
-      ...mapGetters(['getShowMusicPlayer']),
+      ...mapGetters(['getShowMusicPlayer','getSongObj']),
       getShow() {
-        return this.isShow = this.getShowMusicPlayer
+        this.isShow = this.getShowMusicPlayer
+        return this.isShow && Object.keys(this.getSongObj).length !== 0
       }
     }
   }
 </script>
 
 <style lang="stylus" scoped>
-  @import url('http://at.alicdn.com/t/font_1668893_8o3h380zar.css');
+  @import url('http://at.alicdn.com/t/font_1668893_hjir5sb3zeu.css');
 </style>

@@ -2,8 +2,10 @@
   <div class="play-recommend">
     <play-scroll class="play-scroll" :bounce="false" :pullUpLoad="true" @pullingUp="pullingUp" ref="playScroll">
       <swiper3-d :topThree="getTopThree" v-if="getTopThree.length !== 0" v-on="$listeners"></swiper3-d>
-      <play-list-item :listItem="getSurPlus" v-if="getSurPlus.length !== 0" v-on="$listeners" ref="contain"></play-list-item>
-      <van-loading type="spinner" v-show="load" size="20px" color="red"></van-loading>
+      <div ref="contain">
+        <play-list-item :listItem="getSurPlus" v-if="getSurPlus.length !== 0" v-on="$listeners"></play-list-item>
+        <van-loading type="spinner" v-show="load" size="20px" color="red"></van-loading>
+      </div>
     </play-scroll>
   </div>
 </template>
@@ -12,6 +14,7 @@
   import Swiper3D from './child/Swiper3D'
   import PlayScroll from "components/common/betterscroll/BScroll";
   import PlayListItem from '../PlayListItem'
+  import {mapGetters} from 'vuex'
   // ui 框架
   import { Loading } from 'vant';
   
@@ -42,7 +45,8 @@
       },
       getSurPlus() {
         return this.playList.filter((item,index) => index > 2)
-      }
+      },
+      ...mapGetters(['getSongObj'])
     },
     methods: {
       asyncGetPlayList(num) {
@@ -56,6 +60,7 @@
             this.$refs.playScroll.finishPullUp()
             this.count = this.playList.length
             this.load = false
+            this.$refs.playScroll.scroll.refresh()
           }
         })
       },
@@ -65,6 +70,11 @@
     },
     mounted() {
       this.asyncGetPlayList(this.count)
+    },
+    watch: {
+      getSongObj() {
+        this.$refs.contain.style.paddingBottom = '45px'
+      }
     }
   }
 </script>
@@ -75,7 +85,7 @@
   }
   .van-loading {
     display flex
-    margin-top 30px
+    margin-top 15px
     justify-content center
   }
   .play-scroll {

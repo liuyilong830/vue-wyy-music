@@ -1,6 +1,6 @@
 ﻿<template>
   <transition name="list">
-    <div class="play-list-songs" v-if="$attrs.val1 && Object.keys(obj).length !== 0">
+    <div class="play-list-songs" v-if="Object.keys(obj).length !== 0">
       <nav-bar @confirmBack='confirmBack' class="nav-bar" ref="navbar">
         <template v-slot:left>
           <span class="iconfont icon-arrow-prev"></span>
@@ -23,7 +23,7 @@
           </p>
           <div class="selected-more">
             <p class="collection">
-              <span>+ 收藏({{obj.subscribedCount}})</span>
+              <span>+ 收藏({{obj.subscribedCount | playCountFilter}})</span>
             </p>
           </div>
         </div>
@@ -81,7 +81,8 @@
             <song v-for="(item,index) in songs" :key="index" ref="song" @click.native="playerClick(item.id)">
               <template v-slot:img>
                 <div class="number">
-                  <span>{{index+1}}</span>
+                  <span v-if="getIndex !== index">{{index+1}}</span>
+                  <span class="iconfont icon-youshenglaba" v-else></span>
                 </div>
               </template>
               <template v-slot:playing>
@@ -157,6 +158,9 @@
     },
     computed: {
       ...mapGetters(['getSongObj','getShowSong']),
+      getIndex() {
+        return this.songs.findIndex(item => item.id == this.getSongObj.id)
+      }
     },
     methods: {
       confirmBack() {
@@ -187,9 +191,15 @@
           if(res.code === 200) {
             this.songs = res.playlist.tracks
             this.load = false
-            this.$nextTick(() => {
-              this.$refs.contain.style.height = this.getHeight((this.songs.length))
-            })
+            if(Object.keys(this.getSongObj).length !== 0) {
+              this.$nextTick(() => {
+                this.$refs.contain.style.height = this.getHeight((this.songs.length + 1))
+              })
+            } else {
+              this.$nextTick(() => {
+                this.$refs.contain.style.height = this.getHeight((this.songs.length))
+              })
+            }
             this.asyncGetSongsDetail()
           }
         })
@@ -206,17 +216,18 @@
             }
           }
         })
-      }
-    },
-    watch: {
-      songDet(val,oldVal) {
-        this.obj = val
+      },
+      // 初始化数据
+      initData() {
+        this.obj = this.songDet
         this.$nextTick(() => {
           this.offsetTop = this.$refs.image.getBoundingClientRect().height
           this.navbarH = this.$refs.navbar.$el.getBoundingClientRect().height
           this.asyncGetPlayListDetail(this.obj.id)
         })
-      },
+      }
+    },
+    watch: {
       posY(val,oldVal) {
         this.flag = (this.offsetTop - val) <= this.navbarH
         // 如果新值大于旧值，说明手指在向上滑动，反之则向下滑动
@@ -234,7 +245,7 @@
       }
     },
     mounted() {
-    
+      this.initData()
     }
   }
 </script>
@@ -416,6 +427,10 @@
           align-items center
           justify-content center
           font-size 20px
+          .iconfont {
+            font-size 30px
+            color #f55d3b
+          }
         }
       }
     }

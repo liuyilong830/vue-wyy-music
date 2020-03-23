@@ -1,3 +1,4 @@
 export const song = {
-  lyric: '/lyric'
+  lyric: '/lyric',
+  comment: '/comment/music'
 }

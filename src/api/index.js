@@ -8,6 +8,7 @@ const instance = axios.create({
 })
 // 请求拦截器
 instance.interceptors.request.use(config => {
+  const token = window.localStorage.getItem('token-wyy')
   return config
 },err => {
   console.log(err)
@@ -18,7 +19,7 @@ instance.interceptors.response.use(response => {
     return response.data
   }
 },err => {
-  console.log(err)
+  return Promise.reject(err)
 })
 // 封装get请求
 export function get(url,params) {

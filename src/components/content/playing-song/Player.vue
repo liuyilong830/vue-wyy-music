@@ -73,7 +73,15 @@
       captureClick() {
       
       },
-      // 播放和暂停操作
+      // 暂停音乐
+      stopMusic() {
+        if(!this.$refs.audio.paused) {
+          this.$refs.audio.pause()
+          this.flag = false
+          this.$store.commit('setSongFlag',{btnFlag: this.flag})
+        }
+      },
+      // 播放和暂停操作的切换
       playClick() {
         // 当播放的时候，paused的值为false
         if(this.$refs.audio.paused) {
@@ -187,6 +195,10 @@
       // 调增音量
       this.$bus.$on('changeVolume', Proportion => {
         this.volume = Proportion
+      })
+      // 当跳转到登录页面的时候，如果歌曲正在播放，则需要关闭音乐
+      this.$bus.$on('stopMusic', () => {
+        this.stopMusic()
       })
     }
   }

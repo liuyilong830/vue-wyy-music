@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="zindex">
     <div class="music-login">
       <div class="logo">
         <img src="~assets/images/logo2.png" alt="">
@@ -72,6 +72,11 @@
 </script>
 
 <style lang="stylus" scoped>
+  .zindex {
+    position fixed
+    top 0
+    z-index 10001
+  }
   .music-login {
     background-color #dc3130
     width 100vw;

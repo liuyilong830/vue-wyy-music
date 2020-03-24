@@ -66,7 +66,7 @@
     </div>
   
     <transition name="list">
-      <comment v-model="showComment" v-if="showComment" :commentsObj="commentsObj"></comment>
+      <comment v-model="showComment" v-if="showComment" :songId="getSongObj.id"></comment>
     </transition>
   </div>
 </template>
@@ -104,8 +104,7 @@
         isShowLyric: false, // 是否显示歌词
         lyric: {},
         changeLyric: false,
-        showComment: false,
-        commentsObj: {}
+        showComment: false
       }
     },
     model: {
@@ -264,12 +263,7 @@
       },
       // 打开歌曲评论页面
       openComment() {
-        getComment(this.getSongObj.id,50).then(res => {
-          if(res.code === 200) {
-            this.commentsObj = Object.assign({}, res)
-            this.showComment = true
-          }
-        })
+        this.showComment = true
       }
     },
     mounted() {

@@ -11,47 +11,74 @@
           <span class="iconfont icon-fenxiang1"></span>
         </template>
       </nav-bar>
-      <div class="wraper">
-        <div class="song">
-          <div class="left">
-            <img :src="getImgUrl" alt="">
+      <div class="wraper" ref="wraper" @scroll="handleScroll" v-if="this.showComments.length !== 0">
+        <div>
+          <div class="song">
+            <div class="left">
+              <img :src="getImgUrl" alt="">
+            </div>
+            <div class="center">
+              <span class="song-name">{{songObj.name}}</span>
+              <a href="">{{getArtists}}</a>
+            </div>
+            <div class="right">&gt;</div>
           </div>
-          <div class="center">
-            <span class="song-name">{{songObj.name}}</span>
-            <a href="">{{getArtists}}</a>
+          <!-- 热门评论 -->
+          <div class="hot-comments">
+            <h2 class="title">精彩评论</h2>
+            <div class="comment-list">
+              <comment-comp v-for="(item,index) in hotComments" :key="index">
+                <template v-slot:img>
+                  <img :src="item.user.avatarUrl" alt="">
+                </template>
+                <template v-slot:info>
+                  <span>{{item.user.nickname}}</span>
+                </template>
+                <template v-slot:time>
+                  <span>{{item.time | filterTime}}</span>
+                </template>
+                <template v-slot:count-icon>
+                  <span class="count">{{item.likedCount | playCountFilter}}</span>
+                  <span class="iconfont icon-zan" :class="{private: item.liked}" @click="zanClick(item)"></span>
+                </template>
+                <template v-slot:content>
+                  <p class="text" v-html="item.content"></p>
+                </template>
+                <template v-slot:btn v-if="index === hotComments.length-1">
+                  <div class="btn-div">
+                    <span class="btn">全部精彩评论 ></span>
+                  </div>
+                </template>
+              </comment-comp>
+            </div>
           </div>
-          <div class="right">&gt;</div>
+          <!-- 最新评论 -->
+          <div class="news-comments">
+            <h2 class="title">最新评论</h2>
+            <div class="comment-list">
+              <comment-comp v-for="(item,index) in showComments" :key="index">
+                <template v-slot:img>
+                  <img :src="item.user.avatarUrl" alt="">
+                </template>
+                <template v-slot:info>
+                  <span>{{item.user.nickname}}</span>
+                </template>
+                <template v-slot:time>
+                  <span>{{item.time | filterTime}}</span>
+                </template>
+                <template v-slot:count-icon>
+                  <span class="count">{{item.likedCount | playCountFilter}}</span>
+                  <span class="iconfont icon-zan" :class="{private: item.liked}" @click="zanClick(item)"></span>
+                </template>
+                <template v-slot:content>
+                  <p class="text" v-html="item.content"></p>
+                </template>
+              </comment-comp>
+            </div>
+          </div>
+          <!-- 加载图案 -->
+          <van-loading type="spinner" size="20" color="red" v-show="load"/>
         </div>
-        <!-- 热门评论 -->
-        <div class="hot-comments">
-          <h2 class="title">精彩评论</h2>
-          <div class="comment-list">
-            <comment-comp v-for="(item,index) in hotComments" :key="index">
-              <template v-slot:img>
-                <img :src="item.user.avatarUrl" alt="">
-              </template>
-              <template v-slot:info>
-                <span>{{item.user.nickname}}</span>
-              </template>
-              <template v-slot:time>
-                <span>{{item.time | filterTime}}</span>
-              </template>
-              <template v-slot:count-icon>
-                <span class="count">{{item.likedCount}}</span>
-                <span class="iconfont icon-zan"></span>
-              </template>
-              <template v-slot:content>
-                <p class="text" v-html="item.content"></p>
-              </template>
-              <template v-slot:btn v-if="index === hotComments.length-1">
-                <div class="btn-div">
-                  <span class="btn">全部精彩评论 ></span>
-                </div>
-              </template>
-            </comment-comp>
-          </div>
-        </div>
-        <!-- 最新评论 -->
       </div>
     </div>
 </template>
@@ -60,17 +87,31 @@
   import NavBar from 'components/common/navbar/NavBar'
   import CommentComp from 'components/common/comment/CommentComp'
   import {mapGetters} from 'vuex'
+  import {getComment,getHotComment,setFabulous} from 'api/api.js'
+  import {Loading, Toast} from "vant";
   export default {
     name: 'Comment',
     components: {
       NavBar,
-      CommentComp
+      CommentComp,
+      VanLoading: Loading,
     },
     data() {
       return {
         songObj: {},
+        commentsObj: {},
         hotComments: [],
-        comments: []
+        comments: [],
+        showComments: [],
+        scrollY: 0,
+        wraperH: 0,
+        contentH: 0,
+        hotCount: 20,
+        count: 50,
+        hotOffset: 0,
+        offset: 0,
+        type: 0,
+        load: false
       }
     },
     model: {
@@ -78,11 +119,9 @@
       event: 'click'
     },
     props: {
-      commentsObj: {
-        type: Object,
-        default() {
-          return {}
-        }
+      songId: {
+        type: Number,
+        default: 0
       }
     },
     filters: {
@@ -94,18 +133,24 @@
         let day = time.getDate()
         let hour = time.getHours()
         let minute = time.getMinutes()
+        function format(num) {
+          if(num < 10) {
+            return '0'+num
+          }
+          return num
+        }
         if(t.getFullYear() !== year) {
           // 小于当前年份
           return `${year}年${month}月${day}日`
-        } else if((t.getTime() - time.getTime()) >= 2*24*60*60*1000) {
-          // 大于2天，但是在本年份内
-          return `${month}月${day}日`
-        } else if((t.getTime() - time.getTime()) >= 24*60*60*1000) {
-          // 大于等于1天，但小于两天
-          return `昨天${hour}:${minute}`
+        } else if(t.getMonth()+1 !== month || (t.getMonth()+1 == month && t.getDate()-day >= 2)) {
+          // 同一年但是不同月,或者同年同月但是日份大于等于2
+          return `${format(month)}月${format(day)}日`
+        } else if((t.getDate()-day) >= 1) {
+          // 同年同月，且日份在1天到2天之间
+          return `昨天${format(hour)}:${format(minute)}`
         } else if((t.getTime() - time.getTime()) >= 60*60*1000) {
           // 大于等于1小时，但小于1天，显示：00:00
-          return `${hour}:${minute}`
+          return `${format(hour)}:${format(minute)}`
         } else if((t.getTime() - time.getTime()) >= 60000) {
           // 大于等于1分钟，但小于1小时
           return `${parseInt(((t.getTime() - time.getTime())/1000)/60)}分钟前`
@@ -114,7 +159,17 @@
           return `${parseInt((t.getTime() - time.getTime())/1000)}秒前`
         }
       },
-      
+      playCountFilter(value) {
+        if(!value) return ''
+        let val = value.toString()
+        if(val.length > 8) {
+          return val.substring(0,val.toString().length - 8) + '亿'
+        }
+        if(val.length >= 6) {
+          return val.substring(0,val.toString().length - 4) + '万'
+        }
+        return val
+      }
     },
     computed: {
       ...mapGetters(['getShowSong']),
@@ -140,12 +195,69 @@
     methods: {
       confirmBack() {
         this.$emit('click', !this.$attrs.val1)
+      },
+      // 获取最新评论
+      getComment(id, num, offset) {
+        getComment(id,num, offset).then(res => {
+          if(res.code === 200) {
+            this.commentsObj = res
+            this.comments.push(...res.comments)
+            this.showComments.push(...res.comments.filter(item => item.beReplied.length == 0))
+            this.load = false
+            this.$nextTick(() => {
+              this.wraperH = this.$refs.wraper.getBoundingClientRect().height
+              this.contentH = this.$refs.wraper.children[0].getBoundingClientRect().height
+            })
+          }
+        })
+      },
+      // 获取热评
+      getHotComment(id, num, offset, type) {
+        getHotComment(id,num,offset,type).then(res => {
+          if(res.code === 200) {
+            this.hotComments.push(...(res.hotComments.filter((item,index) => index >= this.hotComments.length)))
+          }
+        })
+      },
+      handleScroll() {
+        this.scrollY = this.$refs.wraper.scrollTop
+      },
+      // 点击点赞按钮，根据对象中的liked属性来判断是否已经点赞过
+      zanClick(item) {
+        let show
+        item.liked? show = 0 : show = 1
+        setFabulous(this.songId, item.commentId, show, 0).then(res => {
+          if(res.code == 200) {
+            if(show == 1) {
+              item.liked = true
+              item.likedCount += 1
+            } else {
+              item.liked = false
+              item.likedCount -= 1
+            }
+          }
+        })
+        .catch(err => {
+          this.$bus.$emit('stopMusic')
+          this.$router.replace('/login')
+        })
       }
     },
     mounted() {
       this.songObj = this.getShowSong[0]
-      this.hotComments = this.commentsObj.hotComments
-      this.comments = this.commentsObj.comments
+      /**
+       * 下面这两个网络请求是同步的，为的就是需要在热评和新评都获取到之后再获取 wraper的高度等
+       */
+      this.getHotComment(this.songId, this.hotCount, this.hotOffset, this.type)
+      this.getComment(this.songId, this.count, this.offset)
+    },
+    watch: {
+      scrollY(val) {
+        if(val === this.contentH - this.wraperH) {
+          this.load = true
+          this.getComment(this.songId, this.count, ++this.offset)
+        }
+      }
     }
   }
 </script>
@@ -165,8 +277,7 @@
     }
     .wraper {
       height: calc(100vh - 50px);
-      overflow-y auto
-      overflow-x hidden
+      overflow-y scroll
       .song {
         box-sizing border-box
         height: 73px;
@@ -179,6 +290,7 @@
           height: 100%;
           margin-right 10px
           img {
+            width: 100%;
             height: 100%;
             border-radius 5px
           }
@@ -205,7 +317,7 @@
           justify-content center
         }
       }
-      .hot-comments {
+      .hot-comments, .news-comments {
         box-sizing border-box
         padding 0 15px
         .title {
@@ -215,6 +327,9 @@
           font-weight 600
         }
         .comment-list {
+          .private {
+            color red
+          }
           .count {
             font-size 15px
             padding-right 5px
@@ -236,6 +351,10 @@
             }
           }
         }
+      }
+      .van-loading {
+        display flex
+        justify-content center
       }
     }
   }

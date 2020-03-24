@@ -5,6 +5,7 @@ import {find} from './module/find'
 import {daily} from './module/daily'
 import {song} from './module/song'
 import {playList} from './module/playList'
+import {off} from "vant/lib/utils/dom/event";
 
 export const getSwiperList = () => get(home.swiper)
 
@@ -36,4 +37,10 @@ export const dailySongs = () => get(daily.dailySongs,{timestamp: new Date().getT
 export const songDetail = (ids) => get(daily.songDetail,{ id: ids.join() , timestamp: new Date().getTime() })
 
 export const getLyric = (id) => get(song.lyric, {id, timestamp: new Date().getTime() })
-export const getComment = (id,limit = 40) => get(song.comment, {id, limit, timestamp: new Date().getTime() })
+export const getComment = async (id,limit = 50,offset= 0) => {
+  return await get(song.comment, {id, limit, offset: offset*limit, timestamp: new Date().getTime() })
+}
+export const getHotComment = async (id, limit = 20, offset = 1, type = 0) => {
+  return await get(song.hotcomment, {id, limit, offset: offset * limit, type, timestamp: new Date().getTime()})
+}
+export const setFabulous = (id,cid,t=1,type=0) => get(song.fabulous, {id, cid, t, type, timestamp: new Date().getTime()})

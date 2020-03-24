@@ -254,6 +254,7 @@
     watch: {
       scrollY(val) {
         if(val === this.contentH - this.wraperH) {
+          Toast('到底了')
           this.load = true
           this.getComment(this.songId, this.count, ++this.offset)
         }
@@ -277,6 +278,7 @@
     }
     .wraper {
       height: calc(100vh - 50px);
+      overflow-x hidden
       overflow-y scroll
       .song {
         box-sizing border-box

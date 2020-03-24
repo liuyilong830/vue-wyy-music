@@ -72,11 +72,16 @@
 </script>
 
 <style lang="stylus" scoped>
-  .zindex {
+  /*.zindex {
     position fixed
     top 0
+    left 0
+    bottom 0
+    right 0
+    width: 100vw;
+    height: 100vh;
     z-index 10001
-  }
+  }*/
   .music-login {
     background-color #dc3130
     width 100vw;

@@ -210,7 +210,7 @@
     height 45px
     position fixed
     bottom 0
-    z-index 9999
+    z-index 99
   }
   .playing-song .icon-bofangzhong {
     font-size  28px

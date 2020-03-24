@@ -47,6 +47,8 @@
     display flex
     justify-content space-around
     align-items center
+    position absolute
+    bottom 0px
   }
   .operation .icon-item {
     flex 1

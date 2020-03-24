@@ -51,11 +51,13 @@
       },
       touchStart(event) {
         this.touchs = this.$refs.totalLength.getBoundingClientRect().x
+        console.log(event)
       },
       touchMove(event) {
         this.touche = event.touches[0].pageX || event.touches[0].clientX
         // 如果是向右拖动，则 touchOffsetX 是正数且逐渐增大，否则是负数
         this.touchOffsetX = this.touche - this.touchs
+        console.log(event)
         if(this.touchOffsetX >= this.TotalW || this.touchOffsetX <= 0) return
         this.$emit('touchTime',this.touchOffsetX)
       },

@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from 'store/index.js'
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'http://47.114.167.61/apz',
   timeout: 10000,
   withCredentials: true
 })

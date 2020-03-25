@@ -8,7 +8,7 @@
     <div class="progress-show">
       <div class="total-length" ref="totalLength" @click="jumpClick">
         <div class="current-length" ref="currentLength">
-          <div class="current-dot" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd'></div>
+          <div class="current-dot" @touchstart.prevent='touchStart' @touchmove.prevent='touchMove' @touchend.prevent='touchEnd'></div>
         </div>
       </div>
     </div>
@@ -51,13 +51,11 @@
       },
       touchStart(event) {
         this.touchs = this.$refs.totalLength.getBoundingClientRect().x
-        console.log(event)
       },
       touchMove(event) {
         this.touche = event.touches[0].pageX || event.touches[0].clientX
         // 如果是向右拖动，则 touchOffsetX 是正数且逐渐增大，否则是负数
         this.touchOffsetX = this.touche - this.touchs
-        console.log(event)
         if(this.touchOffsetX >= this.TotalW || this.touchOffsetX <= 0) return
         this.$emit('touchTime',this.touchOffsetX)
       },
@@ -106,8 +104,8 @@
   }
   .progress-show .current-length .current-dot {
     position absolute
-    width 6px
-    height 6px
+    width 10px
+    height 10px
     border-radius 50%
     background-color #fff
     top 50%

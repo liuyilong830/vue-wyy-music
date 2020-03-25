@@ -27,7 +27,11 @@ const state = {
     currentLength: 0,
     current: 0
   },
-  show: false // 控制音乐播放器的显示和隐藏
+  show: false, // 控制音乐播放器的显示和隐藏
+  list: {
+    obj: {},
+    flag: false
+  }
 }
 
 export default new Vuex.Store({

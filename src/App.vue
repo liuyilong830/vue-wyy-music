@@ -1,11 +1,14 @@
 <template>
   <div id="app">
     <main-tab-bar v-show="$route.meta.showTabBar"></main-tab-bar>
-    <keep-alive :exclude="['Login']">
+    <keep-alive :exclude="['Login','DailyRecommend','PlayListSongs']">
       <router-view></router-view>
     </keep-alive>
     <player v-show="$route.meta.showPlayer"></player>
     <music-player v-if="getShow" v-model="getShow"></music-player>
+    <transition name="play-list">
+      <play-list-songs v-model="getList.flag" v-if="getList.flag" :songDet="getList.obj"></play-list-songs>
+    </transition>
   </div>
 </template>
 
@@ -13,21 +16,24 @@
   import MainTabBar from 'components/content/tabbar/MainTabBar'
   import Player from 'components/content/playing-song/Player.vue'
   import MusicPlayer from 'views/music-player/MusicPlayer'
+  import PlayListSongs from 'views/play-list/PlayListSongs'
   import {mapGetters} from 'vuex'
   export default {
     name: 'App',
     components: {
       MainTabBar,
       Player,
-      MusicPlayer
+      MusicPlayer,
+      PlayListSongs
     },
     data() {
       return {
-        isShow: false
+        isShow: false,
+        showSongsList: false
       }
     },
     computed: {
-      ...mapGetters(['getShowMusicPlayer','getSongObj']),
+      ...mapGetters(['getShowMusicPlayer','getSongObj','getList']),
       getShow() {
         this.isShow = this.getShowMusicPlayer
         return this.isShow && Object.keys(this.getSongObj).length !== 0
@@ -38,4 +44,16 @@
 
 <style lang="stylus" scoped>
   @import url('http://at.alicdn.com/t/font_1668893_hjir5sb3zeu.css');
+  #app {
+    width: 100vw;
+    height: 100vh;
+    position relative
+  }
+  .play-list-enter, .play-list-leave-to {
+    opacity: 0;
+    transform: translate(0,60px);
+  }
+  .play-list-enter-active, .play-list-leave-active {
+    transition: all .3s;
+  }
 </style>

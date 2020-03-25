@@ -10,9 +10,9 @@
       <icon-list :classList='classList' @iconClick='iconClick'></icon-list>
 
       <recommend :recommend='recommend'></recommend>
-      <style-rem :playlists='playlist' :songDetail='styleRecom'></style-rem>
+      <style-rem :playlists='playlist' :songDetail='styleRecom' :styleRecomUrl="styleRecomUrl"></style-rem>
       <scene-rem :sceneRecom='sceneRecom'></scene-rem>
-      <new-songs-dish :songDetail='newSongsList' :newDishsList='newDishsList'></new-songs-dish>
+      <new-songs-dish :songDetail='newSongsList' :newDishsList='newDishsList' :newSongsListUrl="newSongsListUrl"></new-songs-dish>
       <top-list :topList='topList5' v-if="topList5.length == 5"></top-list>
       <dj-program :djprogram="djprogramList"></dj-program>
       
@@ -35,7 +35,7 @@
   import BScroll from 'components/common/betterscroll/BScroll.vue'
   import { Swipe, SwipeItem } from 'vant'
 
-  import {swiperList,hotSongs6,sceneRecom,playDetail,styleRecom,newSong,getCatlist,newDish,getTopList,getDjprogram} from 'api/api.js'
+  import {swiperList,hotSongs6,sceneRecom,playDetail,styleRecom,newSong,getCatlist,newDish,getTopList,getDjprogram,songDetail} from 'api/api.js'
   import { mapGetters } from 'vuex'
   export default {
     name: 'Find',
@@ -59,7 +59,9 @@
         sceneRecom: [],
         playlist: {},
         styleRecom: [],
+        styleRecomUrl: [],
         newSongsList: [],
+        newSongsListUrl: [],
         classList: [
           {title: '每日推荐', cls: 'icon-meirituijian'},
           {title: '歌单', cls: 'icon-gedan'},
@@ -133,25 +135,37 @@
           }
         })
         .then(id => {
-          playDetail(id).then(data => {
+          return playDetail(id).then(data => {
             if(data.code === 200) {
               this.playlist = data.playlist;
               if(this.styleRecom.length === 12) return;
               for(let i = 0; i < 12; i++) {
                 this.styleRecom.push(data.playlist.tracks[i])
               }
+              return this.styleRecom.map(item => item.id)
             }
+          })
+        })
+        .then(arr => {
+          songDetail(arr).then(res => {
+            this.styleRecomUrl = res.data
           })
         })
       },
       asyncNewSong() {
-        newSong().then(res => {
+        return newSong().then(res => {
           if(this.newSongsList.length !== 0) return
           if(res.code === 200) {
             for(let i = 0; i < 6; i++) {
               this.newSongsList.push(res.result[i])
             }
+            return this.newSongsList.map(item => item.id)
           }
+        })
+        .then(arr => {
+          songDetail(arr).then(res => {
+            this.newSongsListUrl = res.data
+          })
         })
       },
       asyncGetCatlist() {

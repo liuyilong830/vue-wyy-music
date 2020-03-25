@@ -31,5 +31,8 @@ export const getters = {
   },
   getShowMusicPlayer(state) {
     return state.show
+  },
+  getList(state) {
+    return state.list
   }
 }

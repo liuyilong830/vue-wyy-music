@@ -1,104 +1,102 @@
 ﻿<template>
-  <transition name="list">
-    <div class="play-list-songs" v-if="Object.keys(obj).length !== 0">
-      <nav-bar @confirmBack='confirmBack' class="nav-bar" ref="navbar">
-        <template v-slot:left>
-          <span class="iconfont icon-arrow-prev"></span>
-        </template>
-        <template v-slot:center>
-          <span class="title">歌单</span>
-        </template>
-        <template v-slot:right>
-          <span class="iconfont icon-sousuo"></span>
-        </template>
-      </nav-bar>
-      <!-- 这里面是伪造的元素 -->
-      <div class="position" v-show="flag">
-        <img :src="obj.coverImgUrl" class="coverimg" alt="">
-        <div class="contain-top">
+  <div class="play-list-songs">
+    <nav-bar @confirmBack='confirmBack' class="nav-bar" ref="navbar">
+      <template v-slot:left>
+        <span class="iconfont icon-arrow-prev"></span>
+      </template>
+      <template v-slot:center>
+        <span class="title">歌单</span>
+      </template>
+      <template v-slot:right>
+        <span class="iconfont icon-sousuo"></span>
+      </template>
+    </nav-bar>
+    <!-- 这里面是伪造的元素 -->
+    <div class="position" v-show="flag">
+      <img :src="getImg" class="coverimg" alt="">
+      <div class="contain-top">
+        <p class="playAll">
+          <span class="iconfont icon-bofang"></span>
+          <span>播放全部</span>
+          <span class="track-count">(共{{getSongsCount}}首)</span>
+        </p>
+        <div class="selected-more">
+          <p class="collection">
+            <span>+ 收藏({{getSubscribedCount | playCountFilter}})</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <b-scroll class="songs-scroll" :bounce='false' :probeType='3' @positionY='positionY' ref="dailyScroll">
+      <div class="image" ref="image">
+        <div class="flex" v-if="showTopDescript">
+          <div class="background-img">
+            <img :src="getImg" ref="mask" alt="">
+          </div>
+          <div class="describe">
+            <h2 class="name">{{getTitle}}</h2>
+            <div class="author">
+              <img :src="getAuthorImg" alt="">
+              <span class="nickname">{{obj.creator.nickname}} ></span>
+            </div>
+            <span class="description">{{description}}</span>
+          </div>
+        </div>
+        <div class="operation" v-if="showCount">
+          <div class="operation-item">
+            <span class="iconfont icon-pinglun2"></span>
+            <span class="text">{{getCommentCount}}</span>
+          </div>
+          <div class="operation-item">
+            <span class="iconfont icon-fenxiang1-copy"></span>
+            <span class="text">{{getShareCount}}</span>
+          </div>
+          <div class="operation-item">
+            <span class="iconfont icon-xiazai-copy"></span>
+            <span class="text">下载</span>
+          </div>
+          <div class="operation-item">
+            <span class="iconfont icon-duoxuan"></span>
+            <span class="text">多选</span>
+          </div>
+        </div>
+        <img :src="getImg" class="coverimg" ref="mask" alt="">
+      </div>
+      <div class="contain" ref="contain">
+        <div class="contain-top" ref="containTop">
           <p class="playAll">
             <span class="iconfont icon-bofang"></span>
             <span>播放全部</span>
-            <span class="track-count">(共{{obj.trackCount}}首)</span>
+            <span class="track-count">(共{{getSongsCount}}首)</span>
           </p>
           <div class="selected-more">
             <p class="collection">
-              <span>+ 收藏({{obj.subscribedCount | playCountFilter}})</span>
+              <span>+ 收藏({{getSubscribedCount | playCountFilter}})</span>
             </p>
           </div>
         </div>
-      </div>
-      
-      <b-scroll class="songs-scroll" :bounce='false' :probeType='3' @positionY='positionY' ref="dailyScroll">
-        <div class="image" ref="image">
-          <div class="flex">
-            <div class="background-img">
-              <img :src="obj.coverImgUrl" ref="mask" alt="">
-            </div>
-            <div class="describe">
-              <h2 class="name">{{obj.name}}</h2>
-              <div class="author">
-                <img :src="obj.creator.avatarUrl" alt="">
-                <span class="nickname">{{obj.creator.nickname}} ></span>
+        <div v-if="!load">
+          <song v-for="(item,index) in songs" :key="index" ref="song" @click.native="playerClick(item.id)">
+            <template v-slot:img>
+              <div class="number">
+                <span v-if="getIndex !== index">{{index+1}}</span>
+                <span class="iconfont icon-youshenglaba" v-else></span>
               </div>
-              <span class="description">{{obj.description}}</span>
-            </div>
-          </div>
-          <div class="operation">
-            <div class="operation-item">
-              <span class="iconfont icon-pinglun2"></span>
-              <span class="text">{{obj.commentCount}}</span>
-            </div>
-            <div class="operation-item">
-              <span class="iconfont icon-fenxiang1-copy"></span>
-              <span class="text">{{obj.shareCount}}</span>
-            </div>
-            <div class="operation-item">
-              <span class="iconfont icon-xiazai-copy"></span>
-              <span class="text">下载</span>
-            </div>
-            <div class="operation-item">
-              <span class="iconfont icon-duoxuan"></span>
-              <span class="text">多选</span>
-            </div>
-          </div>
-          <img :src="obj.coverImgUrl" class="coverimg" ref="mask" alt="">
+            </template>
+            <template v-slot:playing>
+              <span class="iconfont icon-youshenglaba"></span>
+            </template>
+            <template v-slot:songName>{{item.name}}</template>
+            <template v-slot:artists>
+              <span>{{item.ar[0].name}}</span>-<span>{{item.al.name}}</span>
+            </template>
+          </song>
         </div>
-        <div class="contain" ref="contain">
-          <div class="contain-top" ref="containTop">
-            <p class="playAll">
-              <span class="iconfont icon-bofang"></span>
-              <span>播放全部</span>
-              <span class="track-count">(共{{obj.trackCount}}首)</span>
-            </p>
-            <div class="selected-more">
-              <p class="collection">
-                <span>+ 收藏({{obj.subscribedCount | playCountFilter}})</span>
-              </p>
-            </div>
-          </div>
-          <div v-if="!load">
-            <song v-for="(item,index) in songs" :key="index" ref="song" @click.native="playerClick(item.id)">
-              <template v-slot:img>
-                <div class="number">
-                  <span v-if="getIndex !== index">{{index+1}}</span>
-                  <span class="iconfont icon-youshenglaba" v-else></span>
-                </div>
-              </template>
-              <template v-slot:playing>
-                <span class="iconfont icon-youshenglaba"></span>
-              </template>
-              <template v-slot:songName>{{item.name}}</template>
-              <template v-slot:artists>
-                <span>{{item.ar[0].name}}</span>-<span>{{item.al.name}}</span>
-              </template>
-            </song>
-          </div>
-          <van-loading type="spinner" v-show="load"/>
-        </div>
-      </b-scroll>
-    </div>
-  </transition>
+        <van-loading type="spinner" v-show="load"/>
+      </div>
+    </b-scroll>
+  </div>
 </template>
 
 <script>
@@ -145,7 +143,7 @@
     },
     filters: {
       playCountFilter(value) {
-        if(!value) return ''
+        if(!value && value !== 0) return ''
         let val = value.toString()
         if(val.length > 8) {
           return val.substring(0,val.toString().length - 8) + '亿'
@@ -157,9 +155,84 @@
       }
     },
     computed: {
-      ...mapGetters(['getSongObj','getShowSong']),
+      ...mapGetters(['getSongObj','getShowSong','getList']),
       getIndex() {
         return this.songs.findIndex(item => item.id == this.getSongObj.id)
+      },
+      getImg() {
+        if(this.obj.coverImgUrl) {
+          return this.obj.coverImgUrl
+        } else if(this.obj.picUrl) {
+          return this.obj.picUrl
+        } else {
+          return false
+        }
+      },
+      getTitle() {
+        if(this.obj.name) {
+          return this.obj.name
+        } else {
+          return false
+        }
+      },
+      getNickName() {
+        if(this.obj.creator) {
+          return this.obj.creator.nickname
+        } else {
+          return false
+        }
+      },
+      getAuthorImg() {
+        if(this.obj.creator.avatarUrl) {
+          return this.obj.creator.avatarUrl
+        } else {
+          return false
+        }
+      },
+      description() {
+        if(this.obj.description) {
+          return this.obj.description
+        } else if(this.obj.creator) {
+          return this.obj.creator.signature
+        } else {
+          return false
+        }
+      },
+      getCommentCount() {
+        if(this.obj.commentCount) {
+          return this.obj.commentCount
+        } else {
+          return 0
+        }
+      },
+      getShareCount() {
+        if(this.obj.shareCount) {
+          return this.obj.shareCount
+        } else {
+          return 0
+        }
+      },
+      getSongsCount() {
+        if(this.obj.trackCount) {
+          return this.obj.trackCount
+        } else {
+          return false
+        }
+      },
+      getSubscribedCount() {
+        if(this.obj.subscribedCount) {
+          return this.obj.subscribedCount
+        } else {
+          return 0
+        }
+      },
+      // 当上面描述部分的数据全部请求到之后再展示
+      showTopDescript() {
+        return (this.getImg && this.getTitle && this.getNickName && this.getAuthorImg && this.description)? true : false
+      },
+      // 当上面的分享数量和评论数量数据请求到之后再显示
+      showCount() {
+        return (this.getCommentCount && this.getShareCount)
       }
     },
     methods: {
@@ -189,6 +262,7 @@
         this.load = true
         getPlayListDetail(id).then(res => {
           if(res.code === 200) {
+            this.obj = res.playlist
             this.songs = res.playlist.tracks
             this.load = false
             if(Object.keys(this.getSongObj).length !== 0) {
@@ -219,7 +293,7 @@
       },
       // 初始化数据
       initData() {
-        this.obj = this.songDet
+        this.obj = this.getList.obj
         this.$nextTick(() => {
           this.offsetTop = this.$refs.image.getBoundingClientRect().height
           this.navbarH = this.$refs.navbar.$el.getBoundingClientRect().height
@@ -257,6 +331,7 @@
     background-color #ffffff
     position fixed
     top 0
+    z-index 10
     .nav-bar {
       background-color transparent
       color #ffffff
@@ -505,12 +580,5 @@
         }
       }
     }
-  }
-  .list-enter, .list-leave-to {
-    opacity: 0;
-    transform: translate(0,60px);
-  }
-  .list-enter-active, .list-leave-active {
-    transition: all .3s;
   }
 </style>

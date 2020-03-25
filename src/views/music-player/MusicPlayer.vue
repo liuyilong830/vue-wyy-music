@@ -326,6 +326,7 @@
     right: 0;
     bottom: 0;
     top: 0;
+    background-color #292929
     transform: scale(1.2)
   }
   .music-contain {
@@ -379,7 +380,7 @@
     width 260px
     height 260px
     border-radius 50%
-    background-color #232323
+    background-color #272727
     margin 0 auto
     display flex
     align-items center
@@ -389,7 +390,7 @@
     height 180px
     border-radius 50%
     margin 0 auto
-    background-color #fff
+    background-color black
     overflow hidden
   }
   .play {

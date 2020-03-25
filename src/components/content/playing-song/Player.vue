@@ -65,6 +65,7 @@
         this.songList = val.map(item => item)
         this.setRandomList(this.songList.length)
       },
+      // 调节音量
       volume(val,oldVal) {
         this.$refs.audio.volume = val
       }

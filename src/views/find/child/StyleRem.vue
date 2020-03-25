@@ -12,7 +12,7 @@
       </template>
     </more>
 
-    <static-swipe class="static-swipe" :list='songDetail'></static-swipe>
+    <static-swipe class="static-swipe" :list='songDetail' @playsong="playsong"></static-swipe>
   </div>
   <van-skeleton v-else :row='6' :row-width='["20%","50%","100%","100%","60%","90%"]'></van-skeleton>
 </template>
@@ -37,10 +37,18 @@
       playlists: {
         type: Object,
         default() {
-          return {}
+          return {
+            songObj: {}
+          }
         }
       },
       songDetail: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      styleRecomUrl: {
         type: Array,
         default() {
           return []
@@ -53,7 +61,15 @@
       }
     },
     methods: {
-      upLoadMoreByStyle() {}
+      upLoadMoreByStyle() {},
+      playsong(item) {
+        this.songObj = this.styleRecomUrl.find(val => val.id == item.id)
+        let detail = this.songDetail.find(val => val.id == item.id)
+        this.$store.commit('setPlayingSong', {song: detail, songObj: this.songObj})
+        this.$store.commit('changeSongObj',this.songObj)
+        // 显示音乐播放器
+        this.$store.commit('showMusicPlayer', true)
+      }
     }
   }
 </script>

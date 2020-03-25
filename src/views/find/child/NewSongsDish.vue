@@ -14,7 +14,7 @@
       </template>
     </more>
 
-    <static-swipe class="static-swipe" :list='show' :flag='currentIndex == 0'></static-swipe>
+    <static-swipe class="static-swipe" :list='show' :flag='currentIndex == 0' @playsong="playsong"></static-swipe>
   </div>
   <van-skeleton v-else :row='6' :row-width='["20%","50%","100%","100%","60%","90%"]'></van-skeleton>
 </template>
@@ -22,7 +22,7 @@
 <script>
   import More from 'components/content/more/More'
   import StaticSwipe from 'components/content/static-swipe/StaticSwipe'
-  import { Skeleton } from 'vant';
+  import { Skeleton, Toast } from 'vant';
   export default {
     name: 'NewSongsDish',
     components: {
@@ -33,7 +33,8 @@
     data() {
       return {
         time: '',
-        currentIndex: 0
+        currentIndex: 0,
+        songObj: {}
       }
     },
     props: {
@@ -44,6 +45,12 @@
         }
       },
       newDishsList: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      newSongsListUrl: {
         type: Array,
         default() {
           return []
@@ -74,6 +81,15 @@
       },
       showNewDish() {
         this.currentIndex = 1
+      },
+      playsong(item) {
+        Toast('由于找不到获取歌曲详情数据，所以暂不支持播放')
+        /*this.songObj = this.newSongsListUrl.find(val => val.id == item.id)
+        let detail = this.songDetail.find(val => val.id == item.id)
+        this.$store.commit('setPlayingSong', {song: detail, songObj: this.songObj})
+        this.$store.commit('changeSongObj',this.songObj)
+        // 显示音乐播放器
+        this.$store.commit('showMusicPlayer', true)*/
       }
     },
     created() {

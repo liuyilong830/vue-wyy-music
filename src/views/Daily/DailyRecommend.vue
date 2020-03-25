@@ -78,7 +78,7 @@
   import PlayingSong from 'components/content/playing-song/PlayingSong'
   import MusicPlayer from 'views/music-player/MusicPlayer'
   import Player from 'components/content/playing-song/Player.vue'
-  import { Loading } from 'vant'
+  import { Loading , Toast } from 'vant'
 
   import {dailySongs,songDetail} from 'api/api.js'
   import {mapGetters} from 'vuex'
@@ -125,7 +125,7 @@
     },
     methods: {
       confirmBack() {
-        this.$router.go(-1)
+        this.$router.replace('/find')
       },
       positionY(position) {
         this.offsetY = - position.y
@@ -201,6 +201,8 @@
           })
           this.getSongDetail()
         }
+      }).catch(err => {
+        this.$router.replace('/login')
       })
     }
   }
@@ -211,7 +213,7 @@
     width 100vw
     height 100vh
     position fixed
-    z-index 999
+    z-index 98
     top 0
     overflow hidden
   }

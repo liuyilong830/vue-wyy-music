@@ -8,15 +8,19 @@
         <span class="title">{{getSongName}}</span>
         <span class="ar">- {{getAuthor}}</span>
       </div>
-      <span class="describe-name">{{getDescribe}}</span>
+      <div class="describe-name">
+        <span>{{getDescribe}}</span>
+      </div>
     </div>
     <div class="bofang" v-show="flag">
-      <span class="iconfont icon-bofang3"></span>
+      <span class="iconfont icon-bofang3" v-show="!play" @click.stop="startOrstopSong"></span>
+      <span class="iconfont icon-bofang4" v-show="play" @click.stop="startOrstopSong"></span>
     </div>
   </div>
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
   export default {
     name: 'StaticSwipeItem',
     props: {
@@ -32,6 +36,14 @@
       }
     },
     computed: {
+      ...mapGetters(['getSongObj','getSongFlag']),
+      play() {
+        if(this.getSongObj.id == this.item.id) {
+          return this.start = this.getSongFlag.btnFlag
+        } else {
+          return false
+        }
+      },
       getImgUrl() {
         if(this.item.al) {
           return this.item.al.picUrl
@@ -60,6 +72,19 @@
           return this.item.song.album.name
         }
       }
+    },
+    data() {
+      return {
+        start: false
+      }
+    },
+    methods: {
+      startOrstopSong() {
+        // 使用事件总线来控制player组件的播放和暂停
+        this.$bus.$emit('startOrstopSong')
+        this.start = !this.start
+        this.$store.commit('setSongFlag',{btnFlag: this.start})
+      },
     }
   }
 </script>

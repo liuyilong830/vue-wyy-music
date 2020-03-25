@@ -1,7 +1,7 @@
 <template>
   <div class="static-swipe" v-if="list.length !== 0">
     <div class="content" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd' ref="content" style="transform:translateX(0px)">
-      <static-swipe-item v-for="(item,index) in list" :key="index+item" :item='item' :flag='flag'></static-swipe-item>
+      <static-swipe-item v-for="(item,index) in list" :key="index+item" :item='item' :flag='flag' @click.native="playsong(item)"></static-swipe-item>
     </div>
   </div>
 </template>
@@ -74,6 +74,9 @@
           this.translateX(0)
         }
         this.$refs.content.style.transition = '.3s'
+      },
+      playsong(item) {
+        this.$emit('playsong', item)
       }
     },
     mounted() {

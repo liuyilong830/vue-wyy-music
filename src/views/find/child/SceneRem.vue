@@ -12,7 +12,7 @@
       </template>
     </more>
 
-    <play-list-det :recommend='sceneRecom'></play-list-det>
+    <play-list-det :recommend='sceneRecom' @toSongsList="toSongsList"></play-list-det>
   </div>
 </template>
 
@@ -27,7 +27,8 @@
     },
     data() {
       return {
-        list: []
+        list: [],
+        name: '场景'
       }
     },
     props: {
@@ -40,7 +41,10 @@
     },
     methods: {
       upLoadMoreBySelect() {
-
+        this.$router.push('/playlist')
+      },
+      toSongsList(item) {
+        this.$store.commit('setListSongs', {obj: item, flag: true})
       }
     }
   }

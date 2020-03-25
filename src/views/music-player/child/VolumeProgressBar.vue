@@ -2,7 +2,7 @@
   <div class="volume-progress-bar">
     <div class="volume_all" @click="jumpClick" ref="volume_all">
       <div class="volume_current" ref="current">
-        <div class="volume_dot" @touchstart='touchStart' @touchmove='touchMove'></div>
+        <div class="volume_dot" @touchstart.prevent='touchStart' @touchmove.prevent='touchMove'></div>
       </div>
     </div>
   </div>
@@ -49,6 +49,7 @@
         this.$refs.current.style.width = `${this.current}px`
       }
       this.volumeAll = this.$refs.volume_all.getBoundingClientRect().width
+      
     },
     beforeDestroy() {
       this.$store.commit('setSongFlag',{current: this.current})
@@ -79,8 +80,8 @@
   }
   .volume_dot {
     position absolute
-    width 6px
-    height 6px
+    width 10px
+    height 10px
     border-radius 50%
     background-color #fff
     top 50%

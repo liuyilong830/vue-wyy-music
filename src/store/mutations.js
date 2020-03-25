@@ -1,6 +1,9 @@
 import {deepCopy} from '@/utils/utils.js'
 
 export const mutations = {
+  showLogin(state) {
+  
+  },
   setAccount(state,account) {
     window.localStorage.setItem('account-wyy',JSON.stringify(account))
     state.account = account
@@ -55,5 +58,8 @@ export const mutations = {
   },
   showMusicPlayer(state, payload) {
     state.show = payload
+  },
+  setListSongs(state,payload) {
+    state.list = Object.assign({}, payload)
   }
 }

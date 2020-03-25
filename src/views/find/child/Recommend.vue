@@ -11,35 +11,20 @@
         <span>查看更多</span>
       </template>
     </more>
-    <!-- <top-scroll :bounce='false' :probeType='3' class='x-scroll'>
-      <div class='recommend-songs'>
-
-        <song-item v-for="(item,index) in recommend" :key="index">
-          <template v-slot:count>
-            <span>{{item.playcount | playCount}}</span>
-          </template>
-          <template v-slot:image>
-            <img :src="item.picUrl" alt="">
-          </template>
-          <template v-slot:describe>
-            <span>{{item.copywriter}}</span>
-          </template>
-        </song-item>
-
-      </div>
-    </top-scroll> -->
-    <play-list-det :recommend='recommend'></play-list-det>
+    <play-list-det :recommend='recommend' @toSongsList="toSongsList"></play-list-det>
   </div>
 </template>
 
 <script>
   import More from 'components/content/more/More'
   import PlayListDet from 'components/content/playlist-detail/PlayListDet'
+  import PlayListSongs from 'views/play-list/PlayListSongs'
   export default {
     name: 'Recommend',
     components: {
       More,
-      PlayListDet
+      PlayListDet,
+      PlayListSongs
     },
     props: {
       recommend: {
@@ -49,9 +34,15 @@
         }
       }
     },
+    data() {
+      return {}
+    },
     methods: {
       upLoadMoreBySelect() {
-
+        this.$router.push('/playlist')
+      },
+      toSongsList(item) {
+        this.$store.commit('setListSongs', {obj: item, flag: true})
       }
     }
   }

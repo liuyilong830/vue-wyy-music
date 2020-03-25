@@ -27,7 +27,6 @@
       </div>
       
       <song-label v-model="isShow" :list="myLabels"></song-label>
-      <play-list-songs v-model="showSongsList" v-if="showSongsList" :songDet="songDet"></play-list-songs>
     </div>
   </div>
 </template>
@@ -37,15 +36,13 @@
   import TopScrollRecom from 'components/common/topx-scroll-recommend/TopScrollRecom'
   import SongLabel from './child/SongLabel'
   import AllPlayList from './AllPlayList'
-  import PlayListSongs from './PlayListSongs'
   export default {
     name: 'PlayList',
     components: {
       NavBar,
       TopScrollRecom,
       SongLabel,
-      AllPlayList,
-      PlayListSongs
+      AllPlayList
     },
     data() {
       return {
@@ -75,15 +72,13 @@
         endY: 0,
         offsetY: 0,
         swipeX: true,
-        swipeY: true,
-        showSongsList: false,
-        songDet: {}
+        swipeY: true
       }
     },
     methods: {
       // 返回操作
       confirmBack() {
-        this.$router.back()
+        this.$router.replace('/find')
       },
       // 设置背景图片，根据轮播图的滚动而展示背景图片
       setStyleBg() {
@@ -167,8 +162,7 @@
         this.currentIndex = index
       },
       openToSongList(obj) {
-        this.songDet = Object.assign({}, obj)
-        this.showSongsList = true
+        this.$store.commit('setListSongs', {obj: obj, flag: true})
       }
     },
     watch: {
@@ -187,7 +181,7 @@
         if(val === 0) {
           this.activeBgUrl = this.bgUrl
         }
-        this.transX = -this.viewWidth*(this.currentIndex)
+        this.transX = -this.viewWidth*val
         this.translateX(this.transX)
         this.$refs.swipe.style.transition = '.3s'
       }

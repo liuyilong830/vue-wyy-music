@@ -5,5 +5,6 @@ export const login = {
   testCode: '/captcha/verify',
   newUserLogin: '/register/cellphone',
   initNickName: '/activate/init/profile',
-  emailLogin: '/login'
+  emailLogin: '/login',
+  refresh: '/login/refresh'
 }

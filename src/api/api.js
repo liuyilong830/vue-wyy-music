@@ -16,6 +16,7 @@ export const testCode = (phone,captcha) => get(login.testCode,{phone,captcha})
 export const newUserLogin = (captcha,phone,password,nickname) => get(login.newUserLogin, {captcha,phone,password,nickname})
 export const initNickName = (nickname) => get(login.initNickName, {nickname})
 export const emailLogin = (email,password) => get(login.emailLogin, {email,password})
+export const refreshLogin = () => get(login.refresh, {timestamp: new Date().getTime()})
 
 export const swiperList = (type) => get(find.swiper, {type,timestamp: new Date().getTime()})
 export const hotSongs6 = () => get(find.hotSongs6, {timestamp: new Date().getTime()})

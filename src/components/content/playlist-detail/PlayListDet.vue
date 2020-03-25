@@ -3,7 +3,7 @@
     <top-scroll :bounce='false' :probeType='3' class='x-scroll'>
       <div class='recommend-songs'>
 
-        <song-item v-for="(item,index) in recommend" :key="index">
+        <song-item v-for="(item,index) in recommend" :key="index" @click.native="openToSongsList(item)">
           <template v-slot:count>
             <span>{{item.playcount || item.playCount | playCountFilter}}</span>
           </template>
@@ -52,8 +52,10 @@
         return value
       }
     },
-    computed: {
-    
+    methods: {
+      openToSongsList(item) {
+        this.$emit('toSongsList', item)
+      }
     }
   }
 </script>

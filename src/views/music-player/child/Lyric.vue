@@ -133,7 +133,7 @@
           offset += this.$refs.itemList.children[i].getBoundingClientRect().height + 15
         }
         this.offsetY = offset
-        this.$refs.itemList.style.transform = `translate(0,-${this.offsetY}px)`
+        this.$refs.itemList.style.transform = `translateY(-${this.offsetY}px)`
         this.$refs.itemList.style.transform = `.2s`
       },
       // 动态获取css中设置的margin-bottom：15px，因为最后项目做完之后是要使用插件转换成vw的，所以只能动态获取
@@ -145,13 +145,6 @@
     },
     mounted() {
       this.timeUpdate()
-      // 歌曲播放结束之后，也需要将索引和偏移量设置为0
-      /* this.$bus.$on('endedSong', () => {
-        this.currentIndex = 0
-        this.offsetY = 0
-        this.$refs.itemList.style.transform = `translate(0,-${this.offsetY}px)`
-        this.$refs.itemList.style.transform = `0s`
-      }) */
     },
     watch: {
       // 监听时间的变化，是有小数的时间

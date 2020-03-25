@@ -6,7 +6,7 @@
       </div>
       <div class="login-phone">
         <div class="btn" @click="loginClick">手机号登录</div>
-        <div class="tiyan" @click="tiyanClick">立即体验</div>
+        <div class="tiyan" @click="tiyanClick" v-if="showTiyan">立即体验</div>
         <div class="icon">
           <i class="iconfont icon-weixin"></i>
           <i class="iconfont icon-QQ"></i>
@@ -31,6 +31,7 @@
   import PhoneLogin from './child/PhoneLogin'
   import PassWord from './child/PassWord'
   import { Toast } from 'vant'
+  import {refreshLogin} from 'api/api.js'
   export default {
     name: 'Login',
     components: {
@@ -41,7 +42,8 @@
       return {
         agress: false,
         isShow: false,
-        showEmail: false
+        showEmail: false,
+        showTiyan: false
       }
     },
     methods: {
@@ -67,21 +69,30 @@
           this.showEmail = true
         }
       }
+    },
+    created() {
+      const path = window.localStorage.getItem('path')
+      if(path !== '/') {
+        this.showTiyan = false
+      } else {
+        refreshLogin().then(res => {
+          console.log(res)
+          if(res.code === 200) this.$router.replace('/find')
+        }).catch(err => {
+          this.showTiyan = true
+        })
+      }
     }
   }
 </script>
 
 <style lang="stylus" scoped>
-  /*.zindex {
-    position fixed
-    top 0
-    left 0
-    bottom 0
-    right 0
+  .zindex {
+    position absolute
     width: 100vw;
     height: 100vh;
-    z-index 10001
-  }*/
+    z-index 1000
+  }
   .music-login {
     background-color #dc3130
     width 100vw;
@@ -108,7 +119,7 @@
   .btn {
     width 75vw
     height 35px
-    margin 0 auto
+    margin 0 auto 15px
     background-color #fff
     border-radius 15px
     color #dc3130

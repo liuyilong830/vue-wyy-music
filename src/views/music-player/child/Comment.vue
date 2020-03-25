@@ -5,13 +5,13 @@
           <span class="iconfont icon-arrow-prev"></span>
         </template>
         <template v-slot:center>
-          <span class="title">评论({{commentsObj.total}})</span>
+          <span class="title">{{allCommentCount}}</span>
         </template>
         <template v-slot:right>
           <span class="iconfont icon-fenxiang1"></span>
         </template>
       </nav-bar>
-      <div class="wraper" ref="wraper" @scroll="handleScroll" v-if="this.showComments.length !== 0">
+      <div class="wraper" ref="wraper" @scroll="handleScroll">
         <div>
           <div class="song">
             <div class="left">
@@ -24,7 +24,7 @@
             <div class="right">&gt;</div>
           </div>
           <!-- 热门评论 -->
-          <div class="hot-comments">
+          <div class="hot-comments" v-if="hotComments.length !== 0">
             <h2 class="title">精彩评论</h2>
             <div class="comment-list">
               <comment-comp v-for="(item,index) in hotComments" :key="index">
@@ -53,7 +53,7 @@
             </div>
           </div>
           <!-- 最新评论 -->
-          <div class="news-comments">
+          <div class="news-comments" v-if="showComments.length !== 0">
             <h2 class="title">最新评论</h2>
             <div class="comment-list">
               <comment-comp v-for="(item,index) in showComments" :key="index">
@@ -190,6 +190,10 @@
         } else if(this.songObj.ar) {
           return this.songObj.ar[0].name
         }
+      },
+      // 展示总共的评论数量
+      allCommentCount() {
+        return this.commentsObj.total? `评论(${this.commentsObj.total})` : '评论'
       }
     },
     methods: {
@@ -253,8 +257,7 @@
     },
     watch: {
       scrollY(val) {
-        if(val === this.contentH - this.wraperH) {
-          Toast('到底了')
+        if(Math.floor(val) === Math.floor(this.contentH - this.wraperH)) {
           this.load = true
           this.getComment(this.songId, this.count, ++this.offset)
         }
@@ -291,6 +294,8 @@
           width: 60px;
           height: 100%;
           margin-right 10px
+          border-radius 5px
+          background-color #cccccc
           img {
             width: 100%;
             height: 100%;

@@ -9,6 +9,7 @@
       @touchmove.stop='touchMove' 
       @touchend.stop='touchEnd'
       @click="closeLyric">
+        <li v-if="noLyric" class="item active">纯音乐，无歌词</li>
         <li v-for="(item,index) in getRealLyric" :key="index" class="item" :class="{active: currentIndex == index}">{{item}}</li>
       </ul>
     </div>
@@ -56,9 +57,17 @@
       }
     },
     computed: {
+      noLyric() {
+        if(this.lyric.lyric == '') {
+          return true
+        }
+      },
       // 将获取到的歌词才分成时间组成的数组和歌词组成的数组，两者一一对应
       getRealLyric() {
         if(Object.keys(this.lyric).length !== 0) {
+          if(this.lyric.lyric == '') {
+            return ''
+          }
           this.timeArr = this.lyric.lyric.match(/(\[\d+.*\])/g)
           this.timeArr = this.timeArr.map(item => item.substring(1,item.length-1))
           this.textArr = this.lyric.lyric.split(/\[\d*:\d*.\d*\]/)
@@ -86,6 +95,7 @@
       },
       // 用户手动滑动歌词的ul
       touchStart(event) {
+        if(this.lyric.lyric == '') return;
         this.$refs.itemList.style.transition = `0s`
         // 滑动开始的时候就需要停止歌词的滚动，也就是让 this.offsetY只变动值，但是不赋值给translate属性，设置为true则停止滚动
         this.flag = true
@@ -149,6 +159,7 @@
     watch: {
       // 监听时间的变化，是有小数的时间
       time(val,oldVal) {
+        if(this.lyric.lyric == '') return;
         // 该属性是父组件传递下来的，是在用户点击或拖动进度条的时候才触发
         if(this.changeLyric || this.init) {
           this.currentIndex = this.setJumpIndex(val)

@@ -31,16 +31,29 @@
     <b-scroll class="songs-scroll" :bounce='false' :probeType='3' @positionY='positionY' ref="dailyScroll">
       <div class="image" ref="image">
         <div class="flex" v-if="showTopDescript">
-          <div class="background-img">
-            <img :src="getImg" ref="mask" alt="">
-          </div>
-          <div class="describe">
-            <h2 class="name">{{getTitle}}</h2>
-            <div class="author">
-              <img :src="getAuthorImg" alt="">
-              <span class="nickname">{{obj.creator.nickname}} ></span>
+          <div class="layout-one" v-if="getList.layout === 1">
+            <div class="background-img">
+              <img :src="getImg" ref="mask" alt="">
             </div>
-            <span class="description">{{description}}</span>
+            <div class="describe">
+              <h2 class="name">{{getTitle}}</h2>
+              <div class="author">
+                <img :src="getAuthorImg" alt="">
+                <p class="nickname">{{getNickName}} ></p>
+              </div>
+              <span class="description">{{description}}</span>
+            </div>
+          </div>
+          <div class="layout-two" v-if="getList.layout === 2">
+            <div class="describe">
+              <h2 class="name">{{getTitle}}</h2>
+              <div class="label">
+                <span>{{obj.updateFrequency}}</span>
+              </div>
+              <div class="description">
+                <span>{{description}}</span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="operation" v-if="showCount">
@@ -61,7 +74,7 @@
             <span class="text">多选</span>
           </div>
         </div>
-        <img :src="getImg" class="coverimg" ref="mask" alt="">
+        <img :src="getImg" class="coverimg" :class="{layoutTwo: getList.layout === 2}" ref="mask" alt="">
       </div>
       <div class="contain" ref="contain">
         <div class="contain-top" ref="containTop">
@@ -89,7 +102,7 @@
             </template>
             <template v-slot:songName>{{item.name}}</template>
             <template v-slot:artists>
-              <span>{{item.ar[0].name}}</span>-<span>{{item.al.name}}</span>
+              <span>{{getAuthorName(item.ar)}}</span>-<span>{{item.al.name}}</span>
             </template>
           </song>
         </div>
@@ -133,14 +146,6 @@
       prop: 'val1',
       event: 'click'
     },
-    props: {
-      songDet: {
-        type: Object,
-        defalut() {
-          return {}
-        }
-      }
-    },
     filters: {
       playCountFilter(value) {
         if(!value && value !== 0) return ''
@@ -160,10 +165,12 @@
         return this.songs.findIndex(item => item.id == this.getSongObj.id)
       },
       getImg() {
-        if(this.obj.coverImgUrl) {
-          return this.obj.coverImgUrl
+        if(this.obj.backgroundCoverUrl) {
+          return this.obj.backgroundCoverUrl
         } else if(this.obj.picUrl) {
           return this.obj.picUrl
+        } else if(this.obj.coverImgUrl) {
+          return this.obj.coverImgUrl
         } else {
           return false
         }
@@ -236,6 +243,9 @@
       }
     },
     methods: {
+      getAuthorName(arr) {
+        return arr.map(item => item.name).join(' / ')
+      },
       confirmBack() {
         this.$emit('click', !this.$attrs.val1)
       },
@@ -293,12 +303,15 @@
       },
       // 初始化数据
       initData() {
-        this.obj = this.getList.obj
+        // this.obj = this.getList.obj
         this.$nextTick(() => {
-          this.offsetTop = this.$refs.image.getBoundingClientRect().height
-          this.navbarH = this.$refs.navbar.$el.getBoundingClientRect().height
-          this.asyncGetPlayListDetail(this.obj.id)
+          // this.offsetTop = this.$refs.image.getBoundingClientRect().height
+          // this.navbarH = this.$refs.navbar.$el.getBoundingClientRect().height
+          // this.asyncGetPlayListDetail(this.getList.obj.id)
         })
+        this.offsetTop = this.$refs.image.getBoundingClientRect().height
+        this.navbarH = this.$refs.navbar.$el.getBoundingClientRect().height
+        this.asyncGetPlayListDetail(this.getList.obj.id)
       }
     },
     watch: {
@@ -348,71 +361,124 @@
         height: 250px;
         position relative
         .flex {
+          height: 200px;
           box-sizing border-box
           padding 50px 15px 0
-          display flex
-          align-items center
-          justify-content space-between
-          .background-img {
-            flex 40%
-            height: 150px;
-            box-sizing border-box
-            border-radius 5px
-            padding 10px 0 15px
-            overflow hidden
-            img {
+          .layout-one {
+            width: 100%;
+            height: 100%;
+            display flex
+            align-items center
+            justify-content space-between
+            .background-img {
+              flex 40%
+              height: 150px;
+              box-sizing border-box
               border-radius 5px
-              height: 100%;
+              padding 10px 0 15px
+              overflow hidden
+              img {
+                border-radius 5px
+                height: 100%;
+              }
+            }
+            .describe {
+              flex 50%
+              height: 150px;
+              box-sizing border-box
+              padding 10px 0px
+              display flex
+              flex-direction column
+              justify-content space-between
+              color #ececec
+              .name {
+                height: 50px;
+                width: 100%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                -webkit-line-clamp: 2;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                font-size 18px
+                color #ffffff
+              }
+              .author {
+                font-size 14px
+                height: 40px;
+                display flex
+                align-items center
+                img {
+                  width: 25px;
+                  height: 25px;
+                  border-radius 50%
+                  overflow hidden
+                  vertical-align middle
+                }
+                p {
+                  width: 140px;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                  white-space nowrap
+                  padding-left 10px
+                }
+              }
+              .description {
+                height: 40px;
+                font-size 14px
+                text-overflow: ellipsis;
+                overflow: hidden;
+                -webkit-line-clamp: 2;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+      
+              }
             }
           }
-          .describe {
-            flex 50%
-            height: 150px;
-            box-sizing border-box
-            padding 10px 0px
+          .layout-two {
+            width: 100%;
+            height: 100%;
             display flex
-            flex-direction column
+            align-items center
             justify-content space-between
-            color #ececec
-            .name {
-              height: 50px;
-              width: 100%;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              -webkit-line-clamp: 2;
-              display: -webkit-box;
-              -webkit-box-orient: vertical;
-              font-size 18px
-              color #ffffff
-            }
-            .author {
-              font-size 16px
-              height: 40px;
+            .describe {
               display flex
-              align-items center
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space nowrap
-              img {
-                width: 25px;
-                height: 25px;
-                border-radius 50%
-                overflow hidden
-                vertical-align middle
+              flex-direction column
+              height: 150px;
+              box-sizing border-box
+              padding 10px 0px
+              .name {
+                height: 50px;
+                width: 100%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                -webkit-line-clamp: 2;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                font-size 20px
+                color #ffffff
               }
-              span {
-                padding-left 10px
+              .label {
+                height: 40px;
+                line-height 40px
+                span {
+                  padding 2px
+                  border-radius 3px
+                  background-color #cccccc8c
+                  color #e6e6e6
+                  font-size 12px
+                }
               }
-            }
-            .description {
-              height: 40px;
-              font-size 14px
-              text-overflow: ellipsis;
-              overflow: hidden;
-              -webkit-line-clamp: 2;
-              display: -webkit-box;
-              -webkit-box-orient: vertical;
-              
+              .description {
+                width: 50%;
+                height: 40px;
+                font-size 14px
+                color #dadada
+                text-overflow: ellipsis;
+                overflow: hidden;
+                -webkit-line-clamp: 2;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+              }
             }
           }
         }
@@ -437,10 +503,14 @@
         .coverimg {
           width: 100%;
           position absolute
-          bottom -30px
+          top -30px
           z-index -2
           transform scale(1.4)
           filter blur(23px)
+        }
+        .layoutTwo {
+          transform scale(1)
+          filter blur(0)
         }
       }
       .contain {
@@ -525,7 +595,7 @@
     .coverimg {
       width: 100%;
       position absolute
-      bottom 0px
+      bottom -30px
       z-index -2
       transform scale(1.4)
       filter blur(23px)

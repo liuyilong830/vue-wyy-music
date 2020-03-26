@@ -41,10 +41,11 @@
     },
     methods: {
       upLoadMoreBySelect() {
+        this.$store.commit('changeIndex', 1)
         this.$router.push('/playlist')
       },
       toSongsList(item) {
-        this.$store.commit('setListSongs', {obj: item, flag: true})
+        this.$store.commit('setListSongs', {obj: item, flag: true, layout: 2})
       }
     }
   }

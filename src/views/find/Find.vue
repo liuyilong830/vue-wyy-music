@@ -87,7 +87,6 @@
     },
     methods: {
       refreshClick() {
-        console.log(111)
         history.go(0)
       },
       onChange() {
@@ -181,7 +180,7 @@
             }
           }
           this.asyncStyleRecom(this.style[Math.floor(Math.random()* this.style.length)].name)
-          this.asyncSceneRecom(this.scene[Math.floor(Math.random()* this.scene.length)].name)
+          this.asyncSceneRecom('官方')
         })
       },
       asyncNewDish() {

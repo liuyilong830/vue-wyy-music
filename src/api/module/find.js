@@ -7,5 +7,8 @@ export const find = {
   catlist: '/playlist/catlist',
   newDish: '/top/album',
   topList: '/top/list',
-  djprogram: '/personalized/djprogram'
+  djprogram: '/personalized/djprogram',
+  topListDetail: '/toplist/detail',
+  search: '/search',
+  hotSearch: '/search/hot/detail'
 }

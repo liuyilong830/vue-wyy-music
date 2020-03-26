@@ -6,6 +6,9 @@
       <tab-bar-item path='/cloud'>云村</tab-bar-item>
       <tab-bar-item path='/video'>视频</tab-bar-item>
     </template>
+    <template v-slot:right>
+      <i class="iconfont icon-sousuo" @click="openToSearch"></i>
+    </template>
   </tab-bar>
 </template>
 
@@ -17,6 +20,11 @@
     components: {
       TabBar,
       TabBarItem
+    },
+    methods: {
+      openToSearch() {
+        this.$router.push('/search')
+      }
     }
   }
 </script>

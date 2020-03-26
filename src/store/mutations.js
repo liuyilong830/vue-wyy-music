@@ -61,5 +61,12 @@ export const mutations = {
   },
   setListSongs(state,payload) {
     state.list = Object.assign({}, payload)
-  }
+  },
+  /**
+   * 当用户点击首页的场景推荐查看更多时，需要跳转到歌单广场中的官方这一栏，需要将playlsit组件中的currentIndex设置为1
+   */
+  changeIndex(state,payload) {
+    state.playlistIndex = payload
+  },
+  // 当打开删除页历史操作页面的时候，不能展示播放组件
 }

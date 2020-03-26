@@ -63,11 +63,22 @@
         }
         this.$refs.content.style.width = this.$refs.border.style.width = (this.contentWidth - this.marginLeft) + 'px'
         
+      },
+      changeIndex(index) {
+        this.$refs.active_border.style.width = this.itemsWidth[index] + 'px'
+        for(let i = 0; i < index; i++) {
+          this.offsetX += this.itemsWidth[i]
+        }
+        this.$refs.active_border.style.transform = `translateX(${index * (this.marginLeft + this.marginRight) + this.offsetX}px)`
+        this.$refs.active_border.style.transition = '.3s'
+        this.offsetX = 0
       }
     },
     mounted() {
       this.getContentWidth()
-      
+      if(this.currentIndex !== 0) {
+        this.changeIndex(this.currentIndex)
+      }
     },
     watch: {
       list(val,oldVal) {
@@ -90,13 +101,7 @@
         })
       },
       currentIndex(val,oldVal) {
-        this.$refs.active_border.style.width = this.itemsWidth[val] + 'px'
-        for(let i = 0; i < val; i++) {
-          this.offsetX += this.itemsWidth[i]
-        }
-        this.$refs.active_border.style.transform = `translateX(${val * (this.marginLeft + this.marginRight) + this.offsetX}px)`
-        this.$refs.active_border.style.transition = '.3s'
-        this.offsetX = 0
+        this.changeIndex(val)
       }
     }
   }

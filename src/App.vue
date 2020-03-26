@@ -1,13 +1,13 @@
 <template>
   <div id="app">
     <main-tab-bar v-show="$route.meta.showTabBar"></main-tab-bar>
-    <keep-alive :exclude="['Login','DailyRecommend','PlayListSongs']">
+    <keep-alive :exclude="['Login','DailyRecommend','PlayList','Search']">
       <router-view></router-view>
     </keep-alive>
     <player v-show="$route.meta.showPlayer"></player>
     <music-player v-if="getShow" v-model="getShow"></music-player>
     <transition name="play-list">
-      <play-list-songs v-model="getList.flag" v-if="getList.flag" :songDet="getList.obj"></play-list-songs>
+      <play-list-songs v-model="getList.flag" v-if="getList.flag"></play-list-songs>
     </transition>
   </div>
 </template>
@@ -29,7 +29,8 @@
     data() {
       return {
         isShow: false,
-        showSongsList: false
+        showSongsList: false,
+        showSearch: false // 控制搜索页面的显示和隐藏
       }
     },
     computed: {
@@ -43,7 +44,7 @@
 </script>
 
 <style lang="stylus" scoped>
-  @import url('http://at.alicdn.com/t/font_1668893_hjir5sb3zeu.css');
+  @import url('http://at.alicdn.com/t/font_1668893_tyx0lyl6qe.css');
   #app {
     width: 100vw;
     height: 100vh;

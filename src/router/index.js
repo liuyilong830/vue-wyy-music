@@ -11,6 +11,7 @@ const Video = () => import('views/video/Video.vue')
 const DailyRecommend = () => import('views/Daily/DailyRecommend')
 const MusicPlayer = () => import('views/music-player/MusicPlayer')
 const PlayList = () => import('views/play-list/PlayList')
+const Search = () => import('views/search/Search')
 
 const routes = [
   { path: '/' , redirect: '/login'},
@@ -21,7 +22,8 @@ const routes = [
   { path: '/cloud' , component: Cloud , meta:{showTabBar:true, showPlayer:true} },
   { path: '/video' , component: Video , meta:{showTabBar:true, showPlayer:true} },
   { path: '/dailyRem' , component: DailyRecommend , meta:{showTabBar: false, showPlayer:true} },
-  { path: '/music' , component: MusicPlayer }
+  { path: '/music' , component: MusicPlayer },
+  { path: '/search' , component: Search, meta:{showTabBar:false, showPlayer:true}}
 ]
 
 const router = new VueRouter({

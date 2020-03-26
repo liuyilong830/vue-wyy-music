@@ -4,7 +4,7 @@ const testUrl = 'http://47.114.167.61/apz'
 const localUrl = 'http://localhost:3000'
 
 const instance = axios.create({
-  baseURL: testUrl,
+  baseURL: localUrl,
   timeout: 10000,
   withCredentials: true
 })

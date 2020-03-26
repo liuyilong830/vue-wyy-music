@@ -1,7 +1,7 @@
 <template>
   <div class="rank-list" ref="rankList">
-    <div class="contain" ref="contain" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd' style="transform:translateX(0px)">
-      <rank-list-item v-for="(item,index) in topList" :key="index" :item='item'></rank-list-item>
+    <div class="contain" ref="contain" @touchstart.prevent='touchStart' @touchmove.prevent='touchMove' @touchend.prevent='touchEnd' style="transform:translateX(0px)">
+      <rank-list-item v-for="(item,index) in topList" :key="index" :item='item' :index="index" v-on="$listeners"></rank-list-item>
     </div>
   </div>
 </template>
@@ -44,6 +44,8 @@
         this.$refs.contain.style.transform = `translateX(${offset}px)`
       },
       touchStart(event) {
+        this.offsetX = 0
+        this.endX = 0
         this.startX = event.touches[0].pageX || event.touches[0].clientX
         this.touchX = Number(this.$refs.contain.style.cssText.match(/\d+/g)[0])
         this.$refs.contain.style.transition = '0s'
@@ -74,7 +76,7 @@
           this.translateX(-this.touchX)
         }
         this.$refs.contain.style.transition = '.3s'
-      }
+      },
     },
     mounted() {
       this.width = this.$refs.contain.children[0].getBoundingClientRect().width

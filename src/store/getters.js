@@ -34,5 +34,11 @@ export const getters = {
   },
   getList(state) {
     return state.list
+  },
+  /**
+   * 将场景推荐点击查看更多的index值传给playlist组件，改变其currentIndex属性值
+   */
+  getChangeIndex(state) {
+    return state.playlistIndex
   }
 }

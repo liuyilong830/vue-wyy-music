@@ -36,6 +36,7 @@
   import TopScrollRecom from 'components/common/topx-scroll-recommend/TopScrollRecom'
   import SongLabel from './child/SongLabel'
   import AllPlayList from './AllPlayList'
+  import {mapGetters} from 'vuex'
   export default {
     name: 'PlayList',
     components: {
@@ -74,6 +75,12 @@
         swipeX: true,
         swipeY: true
       }
+    },
+    computed: {
+      ...mapGetters(['getChangeIndex'])
+    },
+    created() {
+      this.currentIndex = this.getChangeIndex
     },
     methods: {
       // 返回操作
@@ -161,8 +168,9 @@
       setCurrentIndex(index) {
         this.currentIndex = index
       },
+      // 打开歌单页面
       openToSongList(obj) {
-        this.$store.commit('setListSongs', {obj: obj, flag: true})
+        this.$store.commit('setListSongs', {obj: obj, flag: true, layout: 1})
       }
     },
     watch: {
@@ -190,6 +198,9 @@
       // 初次渲染的时候，保存当前页面的视口宽度，用于计算可滚动的区域的长度
       this.viewWidth =  window.innerWidth
       this.$refs.swipe.style.width = this.viewWidth * this.myLabels.length + 'px'
+    },
+    beforeDestroy() {
+      this.$store.commit('changeIndex', 0)
     }
   }
 </script>

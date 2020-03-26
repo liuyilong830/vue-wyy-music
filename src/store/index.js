@@ -29,9 +29,11 @@ const state = {
   },
   show: false, // 控制音乐播放器的显示和隐藏
   list: {
-    obj: {},
-    flag: false
-  }
+    obj: {},  // 保存歌单的详情数据
+    flag: false, // 判断是否展示歌单
+    layout: 1 // 采用不同布局的标识
+  },
+  playlistIndex: 0
 }
 
 export default new Vuex.Store({

@@ -2,20 +2,27 @@
   <div class="rank-list-item" ref="rankListItem">
     <div class="mask">
       <div class="rank-list-item-title">
-        <h2>{{item.name}} ></h2>
+        <h2 @click.stop="openToPlayList">{{item.name}} ></h2>
       </div>
       <ul class="content">
-        <li class="public" v-for="(item,index) in showRank3" :key="index">
+        <li class="public" v-for="(item,index) in showRank3" :key="index" @click="playsong(item)">
           <div class="songImg">
             <img :src="item.al.picUrl" alt="">
           </div>
           <div class="number">{{index+1}}</div>
           <div class="song">
             <span class="song-name">{{item.name}}</span>
-            <span> -{{item.ar[0].name}}</span>
+            <span> -{{getAuthorName(item.ar)}}</span>
           </div>
           <div class="songStatic">
-            <span class="iconfont" :class="{'icon-hengxian1': item.no == 1, 'icon-sjt-s':item.no == 2, 'icon-sjt-s-copy':item.no == 3}">{{getStatic(item)}}</span>
+            <span
+              class="iconfont"
+              :class="{'icon-hengxian1': item.no == 1, 'icon-sjt-s':item.no == 2, 'icon-sjt-s-copy':item.no == 3}"
+              v-show="!play(item)"
+            >
+              {{getStatic(item)}}
+            </span>
+            <span class="iconfont icon-youshenglaba" v-show="play(item)"></span>
           </div>
         </li>
       </ul>
@@ -24,6 +31,8 @@
 </template>
 
 <script>
+  import {mapGetters} from "vuex";
+
   export default {
     name: 'RankListItem',
     props: {
@@ -32,6 +41,10 @@
         default() {
           return {}
         }
+      },
+      index: {
+        type: Number,
+        default: 0
       }
     },
     computed: {
@@ -41,7 +54,8 @@
           arr.push(this.item.tracks[i])
         }
         return arr
-      }
+      },
+      ...mapGetters(['getSongObj'])
     },
     methods: {
       getStatic(item) {
@@ -50,6 +64,18 @@
         } else {
           return ''
         }
+      },
+      openToPlayList() {
+        this.$emit('openToPlayList', this.item)
+      },
+      getAuthorName(arr) {
+        return arr.map(item => item.name).join(' / ')
+      },
+      playsong(item) {
+        this.$emit('playsong', {obj: item, index: this.index})
+      },
+      play(item) {
+        return this.getSongObj.id === item.id
       }
     },
     mounted() {
@@ -151,6 +177,10 @@
     display flex
     align-items center
     justify-content center
+    .icon-youshenglaba {
+      font-size 24px
+      color #ff6a00
+    }
   }
   .songStatic span {
     color #ffffff

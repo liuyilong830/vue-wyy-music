@@ -20,7 +20,7 @@
 <script>
   import More from 'components/content/more/More'
   import StaticSwipe from 'components/content/static-swipe/StaticSwipe'
-  import { Skeleton } from 'vant';
+  import {Skeleton, Toast} from 'vant';
   export default {
     name: 'StyleRem',
     components: {
@@ -64,6 +64,10 @@
       upLoadMoreByStyle() {},
       playsong(item) {
         this.songObj = this.styleRecomUrl.find(val => val.id == item.id)
+        if(!this.songObj.url) {
+          Toast('此歌曲需要网易云音乐vip用户才能收听!')
+          return
+        }
         let detail = this.songDetail.find(val => val.id == item.id)
         this.$store.commit('setPlayingSong', {song: detail, songObj: this.songObj})
         this.$store.commit('changeSongObj',this.songObj)

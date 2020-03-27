@@ -1,5 +1,5 @@
 <template>
-  <div class="player" @click.capture="captureClick">
+  <div class="player" @click.capture="captureClick" :class="{active: zIndex}">
     <playing-song class="playing-song" v-if="getShowSong.length !== 0">
       <template v-slot:Album>
         <img :src="getImgUrl" @click="openPlayer" alt="">
@@ -46,6 +46,9 @@
         } else {
           return ''
         }
+      },
+      zIndex() {
+        return Object.keys(this.getSongObj).length == 0
       }
     },
     watch: {
@@ -212,6 +215,9 @@
     position fixed
     bottom 0
     z-index 99
+  }
+  .active {
+    z-index -1
   }
   .playing-song .icon-bofangzhong {
     font-size  28px

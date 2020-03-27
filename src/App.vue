@@ -29,8 +29,7 @@
     data() {
       return {
         isShow: false,
-        showSongsList: false,
-        showSearch: false // 控制搜索页面的显示和隐藏
+        showSongsList: false
       }
     },
     computed: {

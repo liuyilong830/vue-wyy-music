@@ -67,6 +67,5 @@ export const mutations = {
    */
   changeIndex(state,payload) {
     state.playlistIndex = payload
-  },
-  // 当打开删除页历史操作页面的时候，不能展示播放组件
+  }
 }

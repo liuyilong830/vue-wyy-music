@@ -23,7 +23,7 @@ const routes = [
   { path: '/video' , component: Video , meta:{showTabBar:true, showPlayer:true} },
   { path: '/dailyRem' , component: DailyRecommend , meta:{showTabBar: false, showPlayer:true} },
   { path: '/music' , component: MusicPlayer },
-  { path: '/search' , component: Search, meta:{showTabBar:false, showPlayer:true}}
+  { path: '/search' , component: Search }
 ]
 
 const router = new VueRouter({

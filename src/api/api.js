@@ -5,7 +5,7 @@ import {find} from './module/find'
 import {daily} from './module/daily'
 import {song} from './module/song'
 import {playList} from './module/playList'
-import {off} from "vant/lib/utils/dom/event";
+import {search} from './module/search'
 
 export const getSwiperList = () => get(home.swiper)
 
@@ -29,8 +29,6 @@ export const newDish = (limit = 6) => get(find.newDish, {limit, timestamp: new D
 export const getTopList = (idx) => get(find.topList, {idx, timestamp: new Date().getTime()})
 export const getDjprogram = () => get(find.djprogram, {timestamp: new Date().getTime()})
 export const getTopListDet = () => get(find.topListDetail, {timestamp: new Date().getTime()})
-export const getSearch = (keywords,limit = 20,offset = 0, type = 1018) => get(find.search, {keywords, limit, offset, type, timestamp: new Date().getTime()})
-export const hotSearch = () => get(find.hotSearch, {timestamp: new Date().getTime()})
 
 export const topPlayList = (limit = 33, cat = '全部') => get(playList.topPlayList, {cat, limit, timestamp: new Date().getTime()})
 export const getLabels = () => get(playList.labels, {timestamp: new Date().getTime()})
@@ -48,3 +46,8 @@ export const getHotComment = async (id, limit = 20, offset = 1, type = 0) => {
   return await get(song.hotcomment, {id, limit, offset: offset * limit, type, timestamp: new Date().getTime()})
 }
 export const setFabulous = (id,cid,t=1,type=0) => get(song.fabulous, {id, cid, t, type, timestamp: new Date().getTime()})
+
+export const getSearch = (keywords,limit = 20,offset = 0, type = 1018) => get(search.search, {keywords, limit, offset, type, timestamp: new Date().getTime()})
+export const hotSearch = () => get(search.hotSearch, {timestamp: new Date().getTime()})
+export const defSearch = () => get(search.defSearch, {timestamp: new Date().getTime()})
+export const getSuggest = (keywords, type = 'mobile') => get(search.suggest, {keywords, type, timestamp: new Date().getTime()})

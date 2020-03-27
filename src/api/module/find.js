@@ -9,6 +9,4 @@ export const find = {
   topList: '/top/list',
   djprogram: '/personalized/djprogram',
   topListDetail: '/toplist/detail',
-  search: '/search',
-  hotSearch: '/search/hot/detail'
 }

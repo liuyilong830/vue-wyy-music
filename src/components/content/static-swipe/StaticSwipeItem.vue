@@ -1,7 +1,7 @@
 <template>
   <div class="static-swiper-item" ref="item">
     <div class="static-item-img">
-      <img :src="getImgUrl" alt="">
+      <img v-lazy="getImgUrl" alt="">
     </div>
     <div class="describe">
       <div class="title-and-ar">

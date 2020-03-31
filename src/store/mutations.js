@@ -67,5 +67,8 @@ export const mutations = {
    */
   changeIndex(state,payload) {
     state.playlistIndex = payload
+  },
+  changePlayerFlag(state, flag) {
+    state.close = flag
   }
 }

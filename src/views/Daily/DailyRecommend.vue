@@ -52,7 +52,7 @@
           :flag='getIndex == index? true : false'>
 
             <template v-slot:img>
-              <img :src="item.album.blurPicUrl" alt="">
+              <img v-lazy="item.album.blurPicUrl" alt="">
             </template>
             <template v-slot:playing>
               <span class="iconfont icon-youshenglaba"></span>

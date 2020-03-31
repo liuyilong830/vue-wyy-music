@@ -1,16 +1,21 @@
 ﻿<template>
-  <li class="song-sheet">
+  <li class="songs-video">
     <div class="image">
       <slot name="image">
         <img src="" alt="">
       </slot>
+      <div class="play-count">
+        <slot name="play-count">
+          <span>10万</span>
+        </slot>
+      </div>
     </div>
     <div class="info">
       <div class="title">
-        <slot name="title">歌单名</slot>
+        <slot name="title">视频名</slot>
       </div>
       <div class="describe">
-        <slot name="describe">歌单描述</slot>
+        <slot name="describe">视频描述</slot>
       </div>
     </div>
   </li>
@@ -18,7 +23,7 @@
 
 <script>
   export default {
-    name: 'SongSheet',
+    name: 'SongsVideo',
     components: {},
     data() {
       return {}
@@ -27,7 +32,7 @@
 </script>
 
 <style lang="stylus" scoped>
-  .song-sheet {
+  .songs-video {
     display flex
     align-items center
     justify-content space-between
@@ -36,23 +41,30 @@
     padding-bottom 10px
     .image {
       height: 100%;
-      width: 60px;
+      width: 110px;
       border-radius 4px
       overflow hidden
+      position relative
       img {
         width: 100%;
         height: 100%;
         background-size cover
       }
+      .play-count {
+        position absolute
+        right 2px
+        top 0
+        color #ffffff
+      }
     }
-    
     .info {
       height: 100%;
-      width: calc(100% - 70px);
+      width: calc(100% - 120px);
       box-sizing border-box
       .title {
+        height: 70%;
         display flex
-        font-size 16px
+        font-size 15px
         color #666
         text-overflow: ellipsis;
         overflow: hidden;
@@ -61,6 +73,7 @@
         -webkit-box-orient: vertical;
       }
       .describe {
+        height: 30%;
         font-size 12px
         color #9a9a9a
         text-overflow: ellipsis;

@@ -33,7 +33,8 @@ const state = {
     flag: false, // 判断是否展示歌单
     layout: 1 // 采用不同布局的标识
   },
-  playlistIndex: 0
+  playlistIndex: 0,
+  close: false
 }
 
 export default new Vuex.Store({

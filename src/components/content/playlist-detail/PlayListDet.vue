@@ -8,7 +8,7 @@
             <span>{{item.playcount || item.playCount | playCountFilter}}</span>
           </template>
           <template v-slot:image>
-            <img :src="item.picUrl || item.coverImgUrl" alt="">
+            <img v-lazy="item.picUrl || item.coverImgUrl" alt="">
           </template>
           <template v-slot:describe>
             <span>{{item.copywriter || item.name}}</span>

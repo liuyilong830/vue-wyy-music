@@ -4,7 +4,7 @@
     <keep-alive :exclude="['Login','DailyRecommend','PlayList','Search']">
       <router-view></router-view>
     </keep-alive>
-    <player v-show="$route.meta.showPlayer"></player>
+    <player v-show="$route.meta.showPlayer && !getPlayerFlag"></player>
     <music-player v-if="getShow" v-model="getShow"></music-player>
     <transition name="play-list">
       <play-list-songs v-model="getList.flag" v-if="getList.flag"></play-list-songs>
@@ -33,7 +33,7 @@
       }
     },
     computed: {
-      ...mapGetters(['getShowMusicPlayer','getSongObj','getList']),
+      ...mapGetters(['getShowMusicPlayer','getSongObj','getList','getPlayerFlag']),
       getShow() {
         this.isShow = this.getShowMusicPlayer
         return this.isShow && Object.keys(this.getSongObj).length !== 0
@@ -43,7 +43,7 @@
 </script>
 
 <style lang="stylus" scoped>
-  @import url('http://at.alicdn.com/t/font_1668893_tyx0lyl6qe.css');
+  @import url('http://at.alicdn.com/t/font_1668893_0b5h1rmy75h4.css');
   #app {
     width: 100vw;
     height: 100vh;

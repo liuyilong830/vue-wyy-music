@@ -3,7 +3,7 @@
     <div class="search">
       <transition name="pos">
         <ul class="position" v-show="showSuggest">
-          <li class="pos-item" v-for="(item,index) in suggest" :key="index">
+          <li class="pos-item" v-for="(item,index) in suggest" :key="index" @click="setSearch(item.keyword)">
             <p class="iconfont icon-sousuo"></p>
             <p class="text">{{item.keyword}}</p>
           </li>
@@ -25,7 +25,7 @@
       </nav-bar>
       <div class="wrapper-search" @scroll="onscroll" v-if="!showResult">
         <div class="content" ref="content">
-          <history :history="history" v-if="history.length !== 0" @clearHistory="clearHistory"></history>
+          <history :history="history" v-if="history.length !== 0" @clearHistory="clearHistory" @searchClick="searchClick"></history>
           <hot-search :list="searchList"></hot-search>
         </div>
       </div>
@@ -72,10 +72,7 @@
       event: 'click'
     },
     computed: {
-      ...mapGetters(['getSongObj']),
-      getShowSuggest() {
-      
-      }
+      ...mapGetters(['getSongObj'])
     },
     methods: {
       confirmBack() {
@@ -83,6 +80,9 @@
       },
       // 搜索操作
       search() {
+        if(this.content === '') {
+          this.content = this.showKeyword
+        }
         if(!this.history.find(item => item == this.content)) {
           this.history.unshift(this.content)
           window.localStorage.setItem('history', JSON.stringify(this.history))
@@ -90,6 +90,16 @@
         this.showResult = true
         this.$refs.search.blur()
         this.asyncGetResult(this.content)
+      },
+      setSearch(keyword) {
+        this.content = keyword
+        this.result = {}
+        this.showResult = true
+        this.asyncGetResult(this.content)
+        this.$refs.search.blur()
+      },
+      searchClick(keyword) {
+        this.setSearch(keyword)
       },
       // 失去焦点的时候将搜索建议隐藏
       onblur() {
@@ -146,6 +156,7 @@
         getSearch(keywords).then(res => {
           if(res.code === 200) {
             this.result = res.result
+            this.showSuggest = false
           }
         })
       }
@@ -159,13 +170,19 @@
     },
     mounted() {
       this.asyncDefSearch()
-      if(Object.keys(this.getSongObj).length !== 0) {
-        this.$refs.content.style.paddingBottom = 45 + 'px'
+    },
+    updated() {
+      if(!this.showResult) {
+        if(Object.keys(this.getSongObj).length !== 0) {
+          this.$refs.content.style.paddingBottom = 45 + 'px'
+        }
       }
     },
     watch: {
       getSongObj() {
-        this.$refs.content.style.paddingBottom = 45 + 'px'
+        if(!this.showResult) {
+          this.$refs.content.style.paddingBottom = 45 + 'px'
+        }
       },
       content(val,oldVal) {
         if(val.length !== 0) {
@@ -174,6 +191,9 @@
         } else {
           this.suggest = []
         }
+      },
+      clear(val) {
+        this.$store.commit('changePlayerFlag', val)
       }
     }
   }

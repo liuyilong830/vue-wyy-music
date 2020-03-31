@@ -80,7 +80,8 @@
     },
     mounted() {
       this.width = this.$refs.contain.children[0].getBoundingClientRect().width
-      this.marginBottom = Number(window.getComputedStyle(this.$refs.contain.children[0]).marginRight.match(/\d+/g))
+      let w = window.getComputedStyle(this.$refs.contain.children[0]).marginRight
+      this.marginBottom = Number(w.substring(0, w.length-2))
       this.maxIndex = this.topList.length-1
       this.containWidth = this.topList.length * (this.width + this.marginBottom) - this.marginBottom
       this.$refs.contain.style.width = this.containWidth + 'px'
@@ -96,6 +97,7 @@
   }
   .contain {
     width 0px
+    touch-action: none
   }
   .contain .rank-list-item:last-child {
     margin-right 0

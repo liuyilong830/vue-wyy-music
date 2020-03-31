@@ -13,13 +13,14 @@
           <i class="iconfont icon-weibo"></i>
           <i class="iconfont icon-wangyi" @click="emailBy163"></i>
         </div>
-        <div class="agreement">
-          <span class="button" @click="agress = !agress">{{agress == true? '√' : ''}}</span>
-          <span>同意</span>
-          <a href="">《用户协议》</a>
-          <a href="">《隐私政策》</a>
-          <a href="">《儿童隐私政策》</a>
-        </div>
+        
+      </div>
+      <div class="agreement">
+        <span class="button" @click="agress = !agress">{{agress == true? '√' : ''}}</span>
+        <span>同意</span>
+        <a href="">《用户协议》</a>
+        <a href="">《隐私政策》</a>
+        <a href="">《儿童隐私政策》</a>
       </div>
     </div>
     <phone-login v-model="isShow" v-show="isShow"></phone-login>
@@ -114,7 +115,7 @@
     position absolute
     left 50%
     transform translateX(-50%)
-    bottom 0
+    bottom 25px
   }
   .btn {
     width 75vw
@@ -155,12 +156,14 @@
     border-radius 50%
   }
   .agreement {
-    width 75vw
+    position absolute
+    bottom 0
+    width: 100vw;
+    height: 20px;
     display flex
-    margin 15px auto 
     font-size 12px
     align-items center
-    justify-content space-between
+    justify-content center
   }
   .agreement .button {
     width 8px

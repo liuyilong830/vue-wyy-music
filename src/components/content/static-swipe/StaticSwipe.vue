@@ -81,7 +81,8 @@
     },
     mounted() {
       this.width = this.$refs.content.children[0].getBoundingClientRect().width
-      this.marginBottom = Number(window.getComputedStyle(this.$refs.content.children[0]).marginRight.match(/\d+/g))
+      let w = window.getComputedStyle(this.$refs.content.children[0]).marginRight
+      this.marginBottom = Number(w.substring(0, w.length - 2))
       this.maxIndex = this.list.length/3 - 1
       this.contentWidth = this.list.length/3 * (this.width + this.marginBottom)
       // this.contentWidth = this.$refs.content.getBoundingClientRect().width

@@ -6,21 +6,24 @@
           <img :src="item.pic || item.imageUrl" alt="">
         </van-swipe-item>
       </van-swipe>
-      
+  
       <icon-list :classList='classList' @iconClick='iconClick'></icon-list>
-
+  
       <recommend :recommend='recommend'></recommend>
       <style-rem :playlists='playlist' :songDetail='styleRecom' :styleRecomUrl="styleRecomUrl"></style-rem>
       <scene-rem :sceneRecom='sceneRecom'></scene-rem>
       <new-songs-dish :songDetail='newSongsList' :newDishsList='newDishsList' :newSongsListUrl="newSongsListUrl"></new-songs-dish>
       <top-list :topList='topList5' v-if="topList5.length == 5"></top-list>
       <dj-program :djprogram="djprogramList"></dj-program>
-      
+  
       <div class="refresh">
         <span class="btn" @click="refreshClick">点击刷新</span>
         <span class="refresh-text">换一批内容</span>
       </div>
     </b-scroll>
+    <!--<div class="scroll">
+    
+    </div>-->
   </div>
 </template>
 
@@ -289,5 +292,14 @@
   .refresh .refresh-text {
     color: #cccccc;
     padding-left: 7px;
+  }
+  .scroll {
+    height: calc(100vh - 49px);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .scroll::-webkit-scrollbar{
+    width: 0 !important;
+    display:none;
   }
 </style>

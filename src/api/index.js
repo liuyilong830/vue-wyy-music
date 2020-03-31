@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-const testUrl = 'http://47.114.167.61/apz'
+const testUrl = 'http://vue_music.coderlyl.cn/apz'
 const localUrl = 'http://localhost:3000'
 
 const instance = axios.create({
-  baseURL: localUrl,
+  baseURL: testUrl,
   timeout: 10000,
   withCredentials: true
 })

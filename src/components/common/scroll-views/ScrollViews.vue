@@ -21,10 +21,13 @@
         startX: 0,
         startY: 0,
         offsetX: 0,
+        offsetY: 0,
         endX: 0,
         endY: 0,
         transX: 0,
-        currentIndex: 0
+        currentIndex: 0,
+        swipeY: 0,
+        swipeX: 0
       }
     },
     props: {
@@ -44,17 +47,29 @@
         this.startX = event.touches[0].pageX || event.touches[0].clientX
         this.startY =event.touches[0].pageY || event.touches[0].clientY
         this.$refs.contain.style.transition = '0s'
+        this.offsetY = this.offsetX = 0
+        this.swipeY = this.swipeX = true
       },
       ontouchmove(event) {
         this.endX = event.touches[0].pageX || event.touches[0].clientX
         this.endY = event.touches[0].pageY || event.touches[0].clientY
+        if(this.swipeX && Math.abs(this.offsetX) - Math.abs(this.offsetY) > 10) {
+          this.swipeY = false
+          this.offsetY = 10000
+        } else if(this.swipeY && Math.abs(this.offsetY) - Math.abs(this.offsetX) > 10) {
+          this.swipeX = false
+          this.offsetY = 10000
+          return
+        }
         // 如果是向左滑动，则 offsetX 值为正，反之则为负
         this.offsetX = this.startX - this.endX
+        this.offsetY = this.startY - this.endY
+        if(Math.abs(this.offsetX) < 10) return
         if((this.currentIndex <= 0 && this.offsetX <= 0) || (this.currentIndex >= this.list.length-1 && this.offsetX > 0)) return
         if(this.offsetX > 0) {
-          this.translateX(this.transX - this.offsetX)
+          this.translateX(this.transX - this.offsetX + 10)
         } else {
-          this.translateX(this.transX - this.offsetX)
+          this.translateX(this.transX - this.offsetX - 10)
         }
       },
       ontouchend() {

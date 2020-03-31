@@ -257,7 +257,7 @@
     },
     watch: {
       scrollY(val) {
-        if(Math.floor(val) === Math.floor(this.contentH - this.wraperH)) {
+        if(Math.floor(val) >= Math.floor(this.contentH - this.wraperH) - 10) {
           this.load = true
           this.getComment(this.songId, this.count, ++this.offset)
         }

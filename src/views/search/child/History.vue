@@ -7,7 +7,7 @@
     <div class="wrapper-history">
       <ul class="float" ref="contain">
         <li class="item" v-for="(item,index) in history" :key="index">
-          <span>{{item}}</span>
+          <span @click="searchClick(item)">{{item}}</span>
         </li>
       </ul>
     </div>
@@ -43,6 +43,9 @@
       },
       clearHistory() {
         this.$emit('clearHistory')
+      },
+      searchClick(item) {
+        this.$emit('searchClick', item)
       }
     },
     mounted() {

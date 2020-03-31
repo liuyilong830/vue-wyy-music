@@ -69,7 +69,7 @@
           return
         }
         let detail = this.songDetail.find(val => val.id == item.id)
-        this.$store.commit('setPlayingSong', {song: detail, songObj: this.songObj})
+        this.$store.commit('setSongList', {songs: this.songDetail , songsDetail: this.styleRecomUrl})
         this.$store.commit('changeSongObj',this.songObj)
         // 显示音乐播放器
         this.$store.commit('showMusicPlayer', true)

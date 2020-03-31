@@ -39,7 +39,7 @@
     align-items center
     margin-bottom 10px
     .song-info {
-      flex 85%
+      width: calc(100% - 50px);
       height: 100%;
       display flex
       flex-direction column
@@ -61,7 +61,7 @@
       }
     }
     .icon {
-      flex 15%
+      width: 50px;
       height: 100%;
       display flex
       justify-content space-between

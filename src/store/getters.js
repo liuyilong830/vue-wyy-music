@@ -40,5 +40,8 @@ export const getters = {
    */
   getChangeIndex(state) {
     return state.playlistIndex
+  },
+  getPlayerFlag(state) {
+    return state.close
   }
 }

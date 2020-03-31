@@ -223,7 +223,7 @@
         if(this.obj.trackCount) {
           return this.obj.trackCount
         } else {
-          return false
+          return 0
         }
       },
       getSubscribedCount() {

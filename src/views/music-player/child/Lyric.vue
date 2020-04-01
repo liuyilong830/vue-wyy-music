@@ -77,7 +77,7 @@
         return ''
       },
       // 这里的getSongObj是将来监听歌曲切换之后，要改变歌词和背景等数据的
-      ...mapGetters(['getSongObj']),
+      ...mapGetters(['getSongObj','getSongFlag']),
       // 这里之所以用 visibility 而不用 display是因为会出一点小问题，忘了是啥问题了
       getShowLyric() {
         return this.$attrs.isShowLyric? 'visible' : 'hidden'
@@ -160,6 +160,12 @@
       // 监听时间的变化，是有小数的时间
       time(val,oldVal) {
         if(this.lyric.lyric == '') return;
+        if((val <= 1 || oldVal <= 1) && this.getSongFlag.move == 2) {
+          this.currentIndex = 0
+          this.offsetY = 0
+          this.$refs.itemList.style.transform = `translate(0,-${this.offsetY}px)`
+          this.$refs.itemList.style.transform = `0s`
+        }
         // 该属性是父组件传递下来的，是在用户点击或拖动进度条的时候才触发
         if(this.changeLyric || this.init) {
           this.currentIndex = this.setJumpIndex(val)

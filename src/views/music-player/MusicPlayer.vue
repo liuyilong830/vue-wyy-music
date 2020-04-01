@@ -292,8 +292,9 @@
       },
       // 监听时间变化，时间一边就计算进度条当前位置的长度
       time(val,oldVal) {
+        
         this.currentLength = val * this.allWidth / (this.getMusicTime / 1000)
-        if(val == parseInt(this.getMusicTime / 1000)) {
+        if(val == parseInt(this.getMusicTime / 1000) && this.getSongFlag.move !== 2) {
           // 控制播放按钮和暂停按钮的显示
           this.start = false
           this.$store.commit('setSongFlag',{btnFlag: this.start})

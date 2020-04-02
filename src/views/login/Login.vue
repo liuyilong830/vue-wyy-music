@@ -115,7 +115,7 @@
     position absolute
     left 50%
     transform translateX(-50%)
-    bottom 25px
+    bottom 35px
   }
   .btn {
     width 75vw
@@ -157,7 +157,7 @@
   }
   .agreement {
     position absolute
-    bottom 0
+    bottom 10px
     width: 100vw;
     height: 20px;
     display flex

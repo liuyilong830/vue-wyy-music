@@ -20,8 +20,9 @@ Vue.config.productionTip = false
 // 创建事件总线
 Vue.prototype.$bus = new Vue()
 
-new Vue({
+var vm = new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+console.log(vm)

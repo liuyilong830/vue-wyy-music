@@ -142,6 +142,9 @@
   }
   .describe .describe-name {
     color: #969595;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
   .describe span {
     white-space: nowrap;

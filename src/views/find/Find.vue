@@ -141,8 +141,11 @@
             if(data.code === 200) {
               this.playlist = data.playlist;
               if(this.styleRecom.length === 12) return;
+              var list = data.playlist
               for(let i = 0; i < 12; i++) {
-                this.styleRecom.push(data.playlist.tracks[i])
+                if(list.tracks[i]) {
+                  this.styleRecom.push(list.tracks[i])
+                }
               }
               return this.styleRecom.map(item => item.id)
             }
@@ -183,7 +186,7 @@
             }
           }
           this.asyncStyleRecom(this.style[Math.floor(Math.random()* this.style.length)].name)
-          this.asyncSceneRecom('官方')
+          this.asyncSceneRecom(this.scene[Math.floor(Math.random()* this.scene.length)].name)
         })
       },
       asyncNewDish() {

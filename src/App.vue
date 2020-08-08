@@ -38,6 +38,9 @@
         this.isShow = this.getShowMusicPlayer
         return this.isShow && Object.keys(this.getSongObj).length !== 0
       }
+    },
+    created() {
+      console.log(this)
     }
   }
 </script>

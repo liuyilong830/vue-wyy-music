@@ -1,7 +1,7 @@
 <template>
-  <div class="static-swipe" v-if="list.length !== 0">
+  <div class="static-swipe" v-if="songList.length !== 0">
     <div class="content" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd' ref="content" style="transform:translateX(0px)">
-      <static-swipe-item v-for="(item,index) in list" :key="index+item" :item='item' :flag='flag' @click.native="playsong(item)"></static-swipe-item>
+      <static-swipe-item v-for="(item,index) in songList" :key="index+item" :item='item' :flag='flag' @click.native="playsong(item)"></static-swipe-item>
     </div>
   </div>
 </template>
@@ -23,7 +23,8 @@
         marginBottom: 0,
         currentIndex: 0,
         width: 0,
-        maxIndex: 0
+        maxIndex: 0,
+        songList: []
       }
     },
     props: {
@@ -83,10 +84,15 @@
       this.width = this.$refs.content.children[0].getBoundingClientRect().width
       let w = window.getComputedStyle(this.$refs.content.children[0]).marginRight
       this.marginBottom = Number(w.substring(0, w.length - 2))
-      this.maxIndex = this.list.length/3 - 1
-      this.contentWidth = this.list.length/3 * (this.width + this.marginBottom)
+      this.maxIndex = this.songList.length/3 - 1
+      this.contentWidth = this.songList.length/3 * (this.width + this.marginBottom)
       // this.contentWidth = this.$refs.content.getBoundingClientRect().width
       this.$refs.content.style.width = this.contentWidth + 'px'
+    },
+    created() {
+      var len = this.list.length;
+      var temp = len % 3;
+      this.songList = this.list.filter((item,index) => index < (temp === 0 ? len : len - temp))
     }
   }
 </script>

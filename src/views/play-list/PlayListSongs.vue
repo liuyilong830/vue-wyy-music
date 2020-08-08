@@ -273,6 +273,7 @@
         getPlayListDetail(id).then(res => {
           if(res.code === 200) {
             this.obj = res.playlist
+            console.log(res.playlist)
             this.songs = res.playlist.tracks
             this.load = false
             if(Object.keys(this.getSongObj).length !== 0) {

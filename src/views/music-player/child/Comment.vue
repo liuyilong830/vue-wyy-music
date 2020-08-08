@@ -243,6 +243,7 @@
         })
         .catch(err => {
           this.$bus.$emit('stopMusic')
+          this.$bus.$emit('aaa')
           this.$router.replace('/login')
         })
       }

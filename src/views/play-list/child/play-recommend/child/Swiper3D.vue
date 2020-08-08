@@ -143,7 +143,7 @@
     box-sizing border-box
     padding 10px 15px
     position relative
-    perspective 400
+    perspective 400px
   }
   .swiper-3d .block {
     width: 130px;

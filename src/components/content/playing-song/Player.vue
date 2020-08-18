@@ -87,12 +87,13 @@
       },
       // 播放和暂停操作的切换
       playClick() {
+        var audio = this.$refs.audio;
         // 当播放的时候，paused的值为false
-        if(this.$refs.audio.paused) {
-          this.$refs.audio.play()
+        if(audio.paused) {
+          audio.play()
           this.flag = true
         } else {
-          this.$refs.audio.pause()
+          audio.pause()
           this.flag = false
         }
         this.$store.commit('setSongFlag',{btnFlag: this.flag})

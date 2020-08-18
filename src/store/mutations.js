@@ -48,6 +48,7 @@ export const mutations = {
     state.songsDetail.unshift(payload.songObj)
   },
   changeSongObj(state,songObj) {
+    console.log(songObj.id, state.songObj.id)
     if(songObj.id !== state.songObj.id) {
       state.songFlag.btnFlag = true
     }

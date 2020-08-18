@@ -39,7 +39,7 @@
       ...mapGetters(['getSongObj','getSongFlag']),
       play() {
         if(this.getSongObj.id == this.item.id) {
-          return this.start = this.getSongFlag.btnFlag
+          return this.getSongFlag.btnFlag
         } else {
           return false
         }
@@ -74,16 +74,17 @@
       }
     },
     data() {
-      return {
-        start: false
-      }
+      return {}
     },
     methods: {
       startOrstopSong() {
         // 使用事件总线来控制player组件的播放和暂停
-        this.$bus.$emit('startOrstopSong')
-        this.start = !this.start
-        this.$store.commit('setSongFlag',{btnFlag: this.start})
+        var song = this.getSongObj;
+        if (song.id && song.id === this.item.id) {
+          this.$bus.$emit('startOrstopSong');
+        } else {
+          this.$emit('play', this.item, false);
+        }
       },
     }
   }

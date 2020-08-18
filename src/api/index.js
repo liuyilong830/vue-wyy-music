@@ -5,7 +5,6 @@ const localUrl = 'http://localhost:3000'
 
 const instance = axios.create({
   baseURL: testUrl,
-  timeout: 10000,
   withCredentials: true
 })
 // 请求拦截器

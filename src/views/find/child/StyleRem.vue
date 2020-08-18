@@ -62,7 +62,7 @@
     },
     methods: {
       upLoadMoreByStyle() {},
-      playsong(item) {
+      playsong(item, flag) {
         this.songObj = this.styleRecomUrl.find(val => val.id == item.id)
         if(!this.songObj.url) {
           Toast('此歌曲需要网易云音乐vip用户才能收听!')
@@ -72,6 +72,7 @@
         this.$store.commit('setSongList', {songs: this.songDetail , songsDetail: this.styleRecomUrl})
         this.$store.commit('changeSongObj',this.songObj)
         // 显示音乐播放器
+        if (!flag) return;
         this.$store.commit('showMusicPlayer', true)
       }
     }

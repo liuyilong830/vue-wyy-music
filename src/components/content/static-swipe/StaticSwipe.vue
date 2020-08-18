@@ -1,7 +1,7 @@
 <template>
   <div class="static-swipe" v-if="songList.length !== 0">
-    <div class="content" @touchstart='touchStart' @touchmove='touchMove' @touchend='touchEnd' ref="content" style="transform:translateX(0px)">
-      <static-swipe-item v-for="(item,index) in songList" :key="index+item" :item='item' :flag='flag' @click.native="playsong(item)"></static-swipe-item>
+    <div class="content" @touchstart='touchStart' @touchmove.capture='touchMove' @touchend='touchEnd' ref="content" style="transform:translateX(0px)">
+      <static-swipe-item v-for="(item,index) in songList" :key="index+item" :item='item' :flag='flag' @click.native="playsong(item, true)" @play='(item, flag) => playsong(item, flag)'></static-swipe-item>
     </div>
   </div>
 </template>
@@ -24,7 +24,8 @@
         currentIndex: 0,
         width: 0,
         maxIndex: 0,
-        songList: []
+        songList: [],
+        isMove: false
       }
     },
     props: {
@@ -53,6 +54,7 @@
         this.$refs.content.style.transition = '0s'
       },
       touchMove(event) {
+        this.isMove = true;
         this.endX = event.touches[0].pageX || event.touches[0].clientX
         // offsetX 为正数则是手指往左划，否则手指往右划
         this.offsetX = this.startX - this.endX
@@ -60,6 +62,8 @@
         this.translateX(-(this.transX + this.offsetX))
       },
       touchEnd(event) {
+        if (!this.isMove) return;
+        this.isMove = !this.isMove;
         if((this.currentIndex <= 0 && this.offsetX < 0) || (this.currentIndex >= this.maxIndex && this.offsetX > 0)) return
         if(Math.abs(this.offsetX) >= this.touchw) {
           // 往左划动
@@ -76,8 +80,8 @@
         }
         this.$refs.content.style.transition = '.3s'
       },
-      playsong(item) {
-        this.$emit('playsong', item)
+      playsong(item, flag) {
+        this.$emit('playsong', item, flag)
       }
     },
     mounted() {

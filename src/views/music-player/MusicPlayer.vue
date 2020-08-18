@@ -183,7 +183,6 @@
       },
       // 点击播放和暂停按钮
       startOrstopSong() {
-        console.log('进来了')
         // 使用事件总线来控制player组件的播放和暂停
         this.$bus.$emit('startOrstopSong')
         this.start = !this.start

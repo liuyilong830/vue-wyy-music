@@ -1,6 +1,6 @@
 <template>
   <div class="operation">
-    <div class="icon-item" @click="likeSongClick">
+    <div class="icon-item" @click.stop="likeSongClick">
       <span class="iconfont icon-xinaixin" v-if="!likeFlag"></span>
       <span class="iconfont icon-xinaixin1" v-else></span>
     </div>

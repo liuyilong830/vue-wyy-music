@@ -36,7 +36,14 @@
       },
       touchMove(event) {
         this.end = event.touches[0].pageX || event.touches[0].clientX
-        if((this.end - this.start) >= this.volumeAll || (this.end - this.start) <= 0) return
+        if ((this.end - this.start) >= this.volumeAll) {
+          this.$bus.$emit('changeVolume', this.volume = 1);
+          return
+        }
+        if ((this.end - this.start) <= 0) {
+          this.$bus.$emit('changeVolume', this.volume = 0);
+          return
+        }
         this.current = this.end - this.start
         this.volume = this.current/this.volumeAll
         this.$refs.current.style.width = `${this.current}px`
